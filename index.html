@@ -5,154 +5,243 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GameHub Central</title>
 <meta name="description" content="GameHub Central — loja de apps e mods mobile." />
+<link rel="manifest" href="manifest.json" />
 <style>
   :root{
-    --bg1:#0f0520;
+    --bg:#0f0520;
+    --glass: rgba(255,255,255,0.03);
     --accent1:#7c3aed;
     --accent2:#a78bfa;
-    --glass: rgba(255,255,255,0.04);
     --muted:#cfcbe2;
     --text:#e9e6f7;
-    --card-radius:12px;
-    --maxw:1100px;
+    --card-radius:14px;
+    --maxw:1200px;
+    --sidebar-w:260px;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:
-    radial-gradient(ellipse at 10% 0%, rgba(124,58,237,0.14), transparent 10%),
-    radial-gradient(ellipse at 100% 100%, rgba(167,139,250,0.06), transparent 10%),
-    var(--bg1);color:var(--text)}
-  .wrap{max-width:var(--maxw);margin:28px auto;padding:0 16px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{
-    width:56px;height:56px;border-radius:12px;display:grid;place-items:center;
-    background:linear-gradient(135deg,var(--accent1),#5b21b6);overflow:hidden;
-    box-shadow:0 6px 24px rgba(124,58,237,0.18);
+    radial-gradient(ellipse at 10% 0%, rgba(124,58,237,0.12), transparent 10%),
+    var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+  /* layout */
+  .app-wrap{display:flex;min-height:100vh;max-width:1600px;margin:0 auto}
+  /* sidebar */
+  .sidebar{
+    width:var(--sidebar-w);
+    min-width:var(--sidebar-w);
+    padding:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-right:1px solid rgba(255,255,255,0.02);
+    backdrop-filter: blur(8px);
   }
-  .logo img{width:100%;height:100%;object-fit:cover;display:block}
-  h1{font-size:20px;margin:0}
+  .logo-box{display:flex;align-items:center;gap:12px;margin-bottom:18px;cursor:pointer}
+  .logo-box img{width:56px;height:56px;border-radius:12px;object-fit:cover}
+  .brand-title{font-weight:800;font-size:18px}
+  .sidebar p{color:var(--muted);font-size:13px;margin:6px 0 16px 0}
+  .nav-section{margin-top:12px}
+  .nav-section h4{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .nav-section a{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;color:var(--text);text-decoration:none;margin-bottom:6px}
+  .nav-section a:hover{background:rgba(255,255,255,0.02)}
+  .badge{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:6px 8px;border-radius:999px;font-size:12px;font-weight:700}
 
-  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .search{display:flex;align-items:center;background:rgba(255,255,255,0.02);padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.03)}
-  .search input{border:0;background:transparent;outline:0;color:var(--text);width:220px;font-size:14px}
-  .select{background:transparent;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);color:var(--muted)}
-  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700;text-decoration:none}
+  /* main content */
+  .main{
+    flex:1;padding:20px 28px;
+    max-width:calc(100% - var(--sidebar-w));
+  }
+  .topbar{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+  .searchbar{display:flex;gap:8px;align-items:center}
+  .searchbar input{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);padding:10px 14px;border-radius:999px;color:var(--text);outline:0;width:320px}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700;text-decoration:none}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;color:var(--muted)}
+  .filter-select{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted)}
 
-  main{margin-top:18px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+  /* highlights */
+  .highlights{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap}
+  .highlight-card{flex:1;min-width:220px;background:linear-gradient(90deg, rgba(124,58,237,0.12), rgba(167,139,250,0.06));padding:14px;border-radius:12px;position:relative;overflow:hidden}
+  .highlight-card h3{margin:0;color:#fff}
+  .highlight-card p{color:var(--muted);font-size:13px}
+  .highlight-thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;float:right}
+
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:18px}
   .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-        border-radius:var(--card-radius);overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);
-        box-shadow:0 6px 26px rgba(6,6,12,0.6);transition:transform .18s,box-shadow .18s;backdrop-filter: blur(6px)}
-  .card:hover{transform:translateY(-8px);box-shadow:0 22px 60px rgba(7,7,15,0.7)}
-  .thumb{height:140px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent1);font-size:36px;border-bottom:1px solid rgba(255,255,255,0.02)}
-  .card-body{padding:14px;display:flex;flex-direction:column;flex:1}
-  .tag{font-size:11px;color:var(--accent2);font-weight:800;text-transform:uppercase;margin-bottom:6px}
-  .title{font-size:16px;font-weight:800;margin-bottom:8px}
-  .desc{font-size:13px;color:var(--muted);flex:1;margin-bottom:10px}
+        border-radius:12px;overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);
+        box-shadow:0 10px 30px rgba(0,0,0,0.5);transition:transform .18s,box-shadow .18s;backdrop-filter: blur(6px)}
+  .card:hover{transform:translateY(-6px);box-shadow:0 28px 60px rgba(0,0,0,0.6)}
+  .thumb{height:140px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent1);font-size:36px;border-bottom:1px solid rgba(255,255,255,0.02);overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .card-body{padding:12px;display:flex;flex-direction:column;gap:8px}
+  .tag{font-size:11px;color:var(--accent2);font-weight:800;text-transform:uppercase}
+  .title{font-size:16px;font-weight:800}
+  .desc{font-size:13px;color:var(--muted);flex:1}
   .meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .link{font-size:13px;color:var(--accent1);text-decoration:none;padding:8px 10px;border-radius:8px;border:1px solid rgba(124,58,237,0.12);font-weight:700;background:transparent}
-  .download{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0}
-  .empty{padding:28px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.03);color:var(--muted);text-align:center}
+  .links{display:flex;gap:8px}
+  .badge-small{padding:6px 8px;border-radius:8px;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--accent1),var(--accent2))}
 
-  /* MODAL / DETAIL */
-  .overlay{position:fixed;inset:0;background:rgba(2,2,6,0.6);display:none;align-items:center;justify-content:center;z-index:40;padding:20px}
-  .panel{width:980px;max-width:100%;max-height:92vh;overflow:auto;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border:1px solid rgba(255,255,255,0.04)}
-  .panel .hero{height:260px;border-radius:10px;overflow:hidden;background:#111;display:flex;align-items:center;justify-content:center;color:var(--muted);margin-bottom:12px}
-  .panel h2{margin:6px 0 8px}
-  .panel p{color:var(--muted)}
-  .screenshot{width:160px;height:90px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
-  .close{position:absolute;right:22px;top:18px;background:transparent;border:0;color:var(--muted);font-size:22px;cursor:pointer}
+  /* floating menu (canto inferior direito) */
+  .float-menu{position:fixed;right:18px;bottom:18px;display:flex;flex-direction:column;gap:10px;z-index:60}
+  .float-btn{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;box-shadow:0 12px 36px rgba(124,58,237,0.18);cursor:pointer;font-weight:800}
 
-  .copy-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;margin-left:8px}
+  /* detail overlay */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:70;padding:18px}
+  .panel{width:1000px;max-width:100%;max-height:92vh;overflow:auto;border-radius:12px;background:linear-gradient(180deg, rgba(12,8,18,0.96), rgba(18,12,28,0.96));padding:18px;border:1px solid rgba(255,255,255,0.04)}
+  .panel .hero{height:240px;border-radius:10px;overflow:hidden;background:#0a0a0a;display:flex;align-items:center;justify-content:center;color:var(--muted);margin-bottom:12px}
+  .screenshot{width:180px;height:110px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.03);margin-right:8px}
 
-  /* mobile */
-  @media (max-width:560px){
-    .search input{width:110px}
-    header{gap:8px}
+  /* admin modal */
+  .admin-panel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:90;background:linear-gradient(180deg, rgba(12,8,18,0.98), rgba(18,12,28,0.98));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);display:none;width:920px;max-width:96%;max-height:90vh;overflow:auto}
+  .form-row{display:flex;gap:8px;margin-bottom:8px}
+  .form-row input,.form-row textarea,.form-row select{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+
+  /* responsive */
+  @media (max-width:900px){
+    .sidebar{display:none}
+    .main{max-width:100%;padding:16px}
+    .searchbar input{width:160px}
     .panel{padding:12px}
-    .panel .hero{height:160px}
   }
 </style>
 </head>
 <body>
-  <div class="wrap" id="app">
-    <header>
-      <div class="brand">
-        <div class="logo">
-          <img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="GameHub Central Logo" />
-        </div>
-        <div>
-          <h1>GameHub Central</h1>
-        </div>
+<div class="app-wrap">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-box" id="logoBox" title="Abrir painel admin">
+      <img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="logo" id="logoImg">
+      <div>
+        <div class="brand-title">GameHub Central</div>
+        <div style="font-size:12px;color:var(--muted)">Loja de apps · Vitrine</div>
+      </div>
+    </div>
+
+    <p id="sidebarDesc" style="display:none"> </p>
+
+    <div class="nav-section">
+      <h4>Categorias</h4>
+      <div id="categories"></div>
+    </div>
+
+    <div class="nav-section">
+      <h4>Destaques</h4>
+      <div id="sideHighlights"></div>
+    </div>
+
+    <div style="margin-top:10px">
+      <a class="ghost" href="https://chat.whatsapp.com/Kma7lW0piMU8njwKvqo5e1?mode=hqrc" target="_blank" style="display:inline-block">Grupo WhatsApp</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="searchbar">
+        <input id="q" placeholder="Pesquisar por nome, descrição ou tag..." aria-label="Pesquisar">
       </div>
 
-      <div class="toolbar">
-        <div class="search" title="Pesquisar">
-          <svg width="16" height="16" viewBox="0 0 24 24" style="opacity:.7;margin-right:8px"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 104.47 11.13l4.95 4.95 1.41-1.41-4.95-4.95A6.5 6.5 0 009.5 3zM5 9.5A4.5 4.5 0 119.5 14 4.5 4.5 0 015 9.5z"/></svg>
-          <input id="q" placeholder="Pesquisar por nome ou descrição"/>
-        </div>
-
-        <select id="filter" class="select" title="Filtrar">
+      <div class="controls">
+        <select id="filter" class="filter-select" title="Filtrar">
           <option value="all">Todos</option>
           <option value="games">Jogos</option>
-          <option value="tools">Ferramentas</option>
           <option value="mods">Mods</option>
+          <option value="apps">Apps</option>
+          <option value="tools">Ferramentas</option>
         </select>
 
-        <button id="clearBtn" class="btn">Limpar</button>
-
-        <!-- BOTÃO INSTAGRAM -->
-        <a href="https://www.instagram.com/gabe.am29?igsh=bDc4dHl3ZGNhcm4y" 
-           target="_blank" 
-           class="btn"
-           style="background:linear-gradient(90deg,#a855f7,#7c3aed);text-decoration:none;">
-           Instagram
-        </a>
-
+        <button id="clearBtn" class="ghost">Limpar</button>
+        <a id="instaBtn" class="btn" href="https://www.instagram.com/gabe.am29?igsh=bDc4dHl3ZGNhcm4y" target="_blank">Instagram</a>
       </div>
-    </header>
-
-    <main>
-      <div id="grid" class="grid"></div>
-      <div id="empty" class="empty" style="display:none;margin-top:18px">Nenhum app encontrado.</div>
-    </main>
-  </div>
-
-  <!-- Overlay detalhe -->
-  <div id="overlay" class="overlay">
-    <div class="panel" id="panel">
-      <button class="close" id="closeBtn">✕</button>
-      <div id="detailContent"></div>
     </div>
+
+    <section class="highlights" id="highlights"></section>
+    <section class="grid" id="grid"></section>
+    <div id="empty" style="margin-top:20px;color:var(--muted);display:none">Nenhum app encontrado.</div>
+  </main>
+</div>
+
+<!-- floating quick actions -->
+<div class="float-menu">
+  <button class="float-btn" id="openAdmin" title="Painel admin">⚙</button>
+  <a class="float-btn" id="whatsFloat" href="https://chat.whatsapp.com/Kma7lW0piMU8njwKvqo5e1?mode=hqrc" target="_blank" title="Grupo WhatsApp">💬</a>
+</div>
+
+<!-- detail overlay -->
+<div id="overlay" class="overlay" role="dialog" aria-hidden="true">
+  <div class="panel" id="panel">
+    <button class="ghost" id="closeDetail" style="position:absolute;right:18px;top:18px">✕</button>
+    <div id="detailContent"></div>
   </div>
+</div>
+
+<!-- admin modal -->
+<div id="adminPanel" class="admin-panel" role="dialog" aria-hidden="true">
+  <h3 style="margin-top:0">Painel Admin — GameHub Central</h3>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input id="adminPass" placeholder="Senha para salvar (padrão: gamehub-admin)" type="password">
+    <button id="adminLogin" class="btn">Entrar</button>
+    <button id="exportJson" class="ghost">Exportar JSON</button>
+    <button id="importJsonBtn" class="ghost">Importar JSON</button>
+  </div>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.03);padding-top:12px">
+    <h4>Adicionar / Editar app</h4>
+    <div class="form-row"><input id="f_title" placeholder="Título"></div>
+    <div class="form-row"><input id="f_slug" placeholder="Slug (ex: dramabox)"><input id="f_tag" placeholder="Tag (games, mods, apps)"></div>
+    <div class="form-row"><input id="f_version" placeholder="Versão"><input id="f_size" placeholder="Tamanho"></div>
+    <div class="form-row"><input id="f_icon" placeholder="URL do ícone"><input id="f_download" placeholder="Link de download (opcional)"></div>
+    <div class="form-row"><input id="f_screens" placeholder="Screenshots (separe por | )"></div>
+    <div class="form-row"><textarea id="f_desc" rows="3" placeholder="Descrição curta"></textarea></div>
+    <div class="form-row"><textarea id="f_fullDesc" rows="4" placeholder="Descrição longa"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="saveApp" class="btn">Salvar (local)</button>
+      <button id="clearForm" class="ghost">Limpar</button>
+      <button id="deleteApp" class="ghost" style="margin-left:auto">Excluir selecionado</button>
+    </div>
+    <p style="margin-top:10px;color:var(--muted)">Salvar no painel grava no <code>localStorage</code>. Use Exportar JSON para copiar para apps.js.</p>
+  </div>
+
+  <div style="margin-top:12px"><button id="closeAdmin" class="ghost">Fechar</button></div>
+</div>
 
 <script>
-/* UTILIDADES */
-function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
-function byId(id){ return document.getElementById(id); }
-function debounce(fn, t=160){ let to; return (...a)=>{ clearTimeout(to); to=setTimeout(()=>fn(...a), t); }; }
+/* ---------------------------
+  Utilitários e renderização
+--------------------------- */
+function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+const q = document.getElementById('q');
+const filter = document.getElementById('filter');
+const clearBtn = document.getElementById('clearBtn');
+const grid = document.getElementById('grid');
+const empty = document.getElementById('empty');
+const highlightsEl = document.getElementById('highlights');
+const categoriesEl = document.getElementById('categories');
+const sideHighlights = document.getElementById('sideHighlights');
 
-/* RENDER CARDS */
-function makeThumbHTML(app){
-  if(app.icon) return '<div class="thumb"><img src="'+esc(app.icon)+'" alt="" style="width:100%;height:100%;object-fit:cover"></div>';
-  const initials = (app.title||'').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() || 'GH';
+function makeThumb(app){
+  if(app.icon) return '<div class="thumb"><img src="'+esc(app.icon)+'" alt=""></div>';
+  const initials = (app.title||'').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()||'GH';
   return '<div class="thumb">'+esc(initials)+'</div>';
 }
 
+function badgeHTML(app){
+  if(!app.badges || !app.badges.length) return '';
+  return app.badges.map(b=>`<span class="badge-small">${esc(b)}</span>`).join(' ');
+}
+
 function cardHTML(app){
-  const postHash = '#/app/' + encodeURIComponent(app.slug);
+  const dl = esc(app.download || ('files/' + app.slug + '.apk'));
   return `
-    <article class="card">
-      ${makeThumbHTML(app)}
+    <article class="card" data-slug="${esc(app.slug)}" data-tag="${esc(app.tag||'')}" data-title="${esc((app.title||'').toLowerCase())}">
+      ${makeThumb(app)}
       <div class="card-body">
-        <div class="tag">${esc(app.tag||'app')}</div>
-        <div class="title">${esc(app.title)}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="tag">${esc(app.tag||'app')}</div><div class="title">${esc(app.title)}</div></div>
+          <div>${badgeHTML(app)}</div>
+        </div>
         <div class="desc">${esc(app.desc||'')}</div>
         <div class="meta">
-          <div style="font-size:12px;color:var(--muted)">${esc(app.size||'')}</div>
-          <div>
-            <a class="link" href="${postHash}" data-slug="${esc(app.slug)}">Abrir</a>
-            <a class="link download" href="${esc(app.download || ('files/' + app.slug + '.apk'))}" target="_blank">Download</a>
+          <div style="font-size:12px;color:var(--muted)">${esc(app.version||'')} · ${esc(app.size||'')}</div>
+          <div class="links">
+            <a class="ghost" href="#/app/${encodeURIComponent(app.slug)}" data-slug="${esc(app.slug)}">Abrir</a>
+            <a class="ghost" href="${dl}" target="_blank">Download</a>
           </div>
         </div>
       </div>
@@ -160,132 +249,266 @@ function cardHTML(app){
   `;
 }
 
+/* render grid/list */
 function renderGrid(list){
-  const grid = byId('grid'); 
-  const empty = byId('empty');
   grid.innerHTML = list.map(cardHTML).join('');
   empty.style.display = list.length ? 'none' : 'block';
-
-  grid.querySelectorAll('a.link').forEach(a=>{
-    const h = a.getAttribute('href');
-    if(h.startsWith('#/app/')){
-      a.addEventListener('click', e=>{
-        e.preventDefault();
-        openDetailBySlug(a.dataset.slug);
-      });
-    }
+  // attach click
+  grid.querySelectorAll('.card').forEach(c=>{
+    c.addEventListener('click', e=>{
+      if(e.target.closest('a')) return; // clique em link
+      const slug = c.dataset.slug;
+      openDetailBySlug(slug);
+    });
   });
 }
 
-/* DETALHE / SUBPÁGINA */
+/* detail view */
+const overlay = document.getElementById('overlay');
+const panel = document.getElementById('panel');
 function openDetailBySlug(slug){
-  const apps = window.APPS || [];
-  const app = apps.find(x => x.slug === slug);
+  const app = (window.APPS || []).find(a=>a.slug===slug);
   if(!app) return;
-
   history.pushState({slug}, '', '#/app/' + encodeURIComponent(slug));
-  showOverlay(true);
   populateDetail(app);
+  overlay.style.display='flex';
+  overlay.setAttribute('aria-hidden','false');
 }
+function closeDetail(){
+  overlay.style.display='none';
+  overlay.setAttribute('aria-hidden','true');
+  history.pushState({}, '', '#');
+}
+document.getElementById('closeDetail').addEventListener('click', closeDetail);
+overlay.addEventListener('click', e=>{ if(e.target===overlay) closeDetail(); });
 
 function populateDetail(app){
-  const container = byId('detailContent');
-  const screenshots = (app.screenshots || []).map(s=>`<img class="screenshot" src="${esc(s)}">`).join(' ');
-  const dl = esc(app.download || ('files/' + app.slug + '.apk'));
-
-  const copyButtonHTML = `<button id="copyLinkBtn" class="copy-btn">Copiar link</button>`;
-
-  container.innerHTML = `
+  const screenshots = (app.screenshots||[]).map(s=>`<img class="screenshot" src="${esc(s)}">`).join('');
+  const dl = esc(app.download||('files/'+app.slug+'.apk'));
+  const badges = (app.badges||[]).map(b=>`<span class="badge-small">${esc(b)}</span>`).join(' ');
+  const html = `
     <div class="hero">${screenshots || esc(app.title)}</div>
-    <h2>${esc(app.title)}</h2>
-    <p>${esc(app.desc||'')}</p>
-
-    <p><strong>Versão:</strong> ${esc(app.version||'')} · <strong>Tamanho:</strong> ${esc(app.size||'')}</p>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+    <h2>${esc(app.title)} ${badges}</h2>
+    <p style="color:var(--muted)">${esc(app.desc||'')}</p>
+    <p style="color:var(--muted)"><strong>Versão:</strong> ${esc(app.version||'')} · <strong>Tamanho:</strong> ${esc(app.size||'')}</p>
+    <div style="display:flex;gap:10px;margin-top:10px">
       <a class="btn" href="${dl}" target="_blank">Baixar</a>
-      ${copyButtonHTML}
+      <button id="copyLinkBtn" class="ghost">Copiar link</button>
+      <button id="reportBtn" class="ghost">Reportar</button>
     </div>
-
-    <h3 style="margin-top:18px">Descrição</h3>
-    <p>${esc(app.fullDesc||app.desc||'')}</p>
+    <h3 style="margin-top:16px">Descrição</h3>
+    <p style="color:var(--muted)">${esc(app.fullDesc || app.desc || '')}</p>
   `;
-
-  const copyBtn = byId('copyLinkBtn');
-  copyBtn.onclick = async ()=>{
+  document.getElementById('detailContent').innerHTML = html;
+  const copyBtn = document.getElementById('copyLinkBtn');
+  copyBtn.addEventListener('click', async ()=>{
     const url = location.origin + location.pathname + '#/app/' + encodeURIComponent(app.slug);
-    try{
-      await navigator.clipboard.writeText(url);
-      copyBtn.textContent = "Copiado!";
-      setTimeout(()=> copyBtn.textContent = "Copiar link", 1600);
-    }catch(e){}
-  };
+    try{ await navigator.clipboard.writeText(url); copyBtn.textContent='Copiado!'; setTimeout(()=>copyBtn.textContent='Copiar link',1400);}catch(e){}
+  });
+  // increment download counter when user clicks Baixar
+  document.querySelector('.btn[href="'+dl+'"]')?.addEventListener('click', ()=>{
+    incrementDownload(app.slug);
+    renderStats(); // update side
+  });
 }
 
-/* OVERLAY */
-function showOverlay(v){
-  const ov = byId('overlay');
-  ov.style.display = v ? 'flex' : 'none';
-}
-byId('closeBtn').onclick = ()=>{ showOverlay(false); history.pushState({}, '', '#'); };
-byId('overlay').onclick = e=>{ if(e.target===byId('overlay')) byId('closeBtn').click(); };
-
-/* FILTRO + BUSCA */
-const q = byId('q'), filter = byId('filter'), clearBtn = byId('clearBtn');
+/* filters / search / suggestions */
 function filterAndSearch(){
-  const term = (q.value||'').toLowerCase();
+  const term = (q.value||'').trim().toLowerCase();
   const tag = filter.value;
-  const apps = window.APPS || [];
-
+  const apps = (window.APPS || []).slice();
   const res = apps.filter(a=>{
-    if(tag!=='all' && a.tag!==tag) return false;
-    return (a.title+' '+(a.desc||'')+' '+(a.fullDesc||'')).toLowerCase().includes(term);
+    if(tag!=='all' && (a.tag||'')!==tag) return false;
+    if(!term) return true;
+    const hay = (a.title + ' ' + (a.desc||'') + ' ' + (a.fullDesc||'')).toLowerCase();
+    return hay.includes(term);
   });
   renderGrid(res);
 }
-q.oninput = debounce(filterAndSearch,160);
-filter.onchange = filterAndSearch;
-clearBtn.onclick = ()=>{ q.value=''; filter.value='all'; filterAndSearch(); };
+q.addEventListener('input', debounce(filterAndSearch, 140));
+filter.addEventListener('change', filterAndSearch);
+clearBtn.addEventListener('click', ()=>{ q.value=''; filter.value='all'; filterAndSearch(); });
 
-/* POPSTATE */
-window.onpopstate = ()=>{ 
-  if(location.hash.startsWith('#/app/')){
-    openDetailBySlug(decodeURIComponent(location.hash.replace('#/app/','')));
-  } else showOverlay(false);
-};
-
-/* AGUARDAR apps.js */
-function init(){
-  if(window.APPS){ filterAndSearch(); if(location.hash.startsWith('#/app/')) openDetailBySlug(decodeURIComponent(location.hash.replace('#/app/',''))); }
-  else setTimeout(init,60);
+/* highlights and sidebar categories */
+function renderHighlights(){
+  const apps = window.APPS || [];
+  // highlights: marked by highlight:true OR newest (by versionTimestamp) fallback
+  const highlighted = apps.filter(a=>a.highlight).slice(0,3);
+  const fallback = apps.slice().sort((a,b)=> (b.timestamp||0)-(a.timestamp||0)).slice(0,3);
+  const final = highlighted.length? highlighted : fallback;
+  highlightsEl.innerHTML = final.map(a=>`
+    <div class="highlight-card">
+      <img src="${esc(a.icon||'')}" class="highlight-thumb" onerror="this.style.display='none'"/>
+      <h3>${esc(a.title)}</h3>
+      <p>${esc(a.desc||'')}</p>
+    </div>
+  `).join('');
+  // sidebar highlights (small)
+  sideHighlights.innerHTML = final.map(a=>`<div style="margin-bottom:8px"><a href="#/app/${encodeURIComponent(a.slug)}" style="color:var(--text);text-decoration:none">${esc(a.title)}</a></div>`).join('');
+  // categories
+  const cats = Array.from(new Set((apps.map(a=>a.tag).filter(Boolean))));
+  categoriesEl.innerHTML = cats.map(c=>`<a href="#" class="cat-item" data-cat="${esc(c)}">${esc(c)}</a>`).join('');
+  document.querySelectorAll('.cat-item').forEach(el=> el.addEventListener('click', e=>{ e.preventDefault(); filter.value = el.dataset.cat; filterAndSearch(); }));
 }
-init();
-</script>
 
-<script>
+/* sidebar stats (downloads) */
+function incrementDownload(slug){
+  const key = 'gh_downloads';
+  const data = JSON.parse(localStorage.getItem(key) || '{}');
+  data[slug] = (data[slug]||0) + 1;
+  localStorage.setItem(key, JSON.stringify(data));
+}
+function getDownloads(slug){
+  const data = JSON.parse(localStorage.getItem('gh_downloads') || '{}');
+  return data[slug] || 0;
+}
+function renderStats(){
+  // place hot badges next to cards (lightweight) and side
+  document.querySelectorAll('.card').forEach(card=>{
+    const slug = card.dataset.slug;
+    const cnt = getDownloads(slug);
+    let el = card.querySelector('.small-download');
+    if(!el){ el = document.createElement('div'); el.className='small-download'; el.style.fontSize='12px'; el.style.color='var(--muted)'; card.querySelector('.meta').prepend(el); }
+    el.textContent = `↓ ${cnt}`;
+  });
+}
+
+/* dynamic load of apps.js (no-cache) */
 (async function(){
   try{
-    // busca apps.js ignorando cache
     const res = await fetch('apps.js?t=' + Date.now(), { cache: 'no-store' });
-    if(!res.ok) throw new Error('apps.js não encontrado: ' + res.status);
+    if(!res.ok) throw new Error('apps.js não encontrado');
     const js = await res.text();
-
-    // cria um blob para executar o script recém-baixado (mantém debugging possível)
     const blob = new Blob([js], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);
-    const s = document.createElement('script');
-    s.src = url;
-    s.onload = () => { URL.revokeObjectURL(url); /* libera memória */ };
-    s.onerror = (e) => console.error('Erro ao carregar apps.js', e);
+    const s = document.createElement('script'); s.src = url;
+    s.onload = ()=>{ URL.revokeObjectURL(url); initApp(); };
     document.body.appendChild(s);
-  } catch(err) {
-    console.error('Falha ao carregar apps.js dinamicamente:', err);
-    // fallback simples: tentar carregar normal
-    const s2 = document.createElement('script');
-    s2.src = 'apps.js';
-    document.body.appendChild(s2);
+  }catch(err){
+    console.error('Erro carregando apps.js', err);
+    // fallback
+    const s = document.createElement('script'); s.src='apps.js'; s.onload=initApp; document.body.appendChild(s);
   }
 })();
+
+/* iniciar após apps carregado */
+function initApp(){
+  // merge localStorage temporary apps (admin saved) into APPS
+  const stored = JSON.parse(localStorage.getItem('gh_local_apps') || '[]');
+  if(Array.isArray(stored) && stored.length) window.APPS = (window.APPS || []).concat(stored);
+  populateFilterFromApps();
+  renderHighlights();
+  filterAndSearch();
+  renderStats();
+  // routing
+  if(location.hash.startsWith('#/app/')){
+    openDetailBySlug(decodeURIComponent(location.hash.replace('#/app/','')));
+  }
+}
+
+/* populate filter options from tags */
+function populateFilterFromApps(){
+  const apps = window.APPS || [];
+  const tags = Array.from(new Set(apps.map(a=>a.tag).filter(Boolean)));
+  // clear select (keep all)
+  filter.innerHTML = '<option value="all">Todos</option>' + tags.map(t=>`<option value="${esc(t)}">${esc(t[0].toUpperCase()+t.slice(1))}</option>`).join('');
+}
+
+/* debounce util */
+function debounce(fn, t=160){ let to; return (...a)=>{ clearTimeout(to); to=setTimeout(()=>fn(...a), t); }; }
+
+/* admin panel logic (local only) */
+const adminPanel = document.getElementById('adminPanel');
+const openAdminBtn = document.getElementById('openAdmin');
+const logoBox = document.getElementById('logoBox');
+
+function openAdmin(){
+  adminPanel.style.display='block';
+  adminPanel.setAttribute('aria-hidden','false');
+}
+function closeAdmin(){ adminPanel.style.display='none'; adminPanel.setAttribute('aria-hidden','true'); }
+openAdminBtn.addEventListener('click', ()=>{ openAdmin(); }); 
+logoBox.addEventListener('click', ()=>{ // fallback: tap 6x or ctrl+shift+a is alternative
+  // small secret: require 6 rapid clicks to open admin without password (for mobile)
+  if(!logoBox._clicks) logoBox._clicks=0;
+  logoBox._clicks++;
+  clearTimeout(logoBox._ct);
+  logoBox._ct = setTimeout(()=> logoBox._clicks=0,900);
+  if(logoBox._clicks>=6) openAdmin();
+});
+
+document.getElementById('closeAdmin').addEventListener('click', closeAdmin);
+
+/* admin form actions */
+document.getElementById('adminLogin').addEventListener('click', ()=>{
+  const p = document.getElementById('adminPass').value || 'gamehub-admin';
+  // trivial check: accept any password but save to storage if correct (local)
+  localStorage.setItem('gh_admin_pass', p);
+  alert('Senha salva localmente. Agora pode salvar apps no painel (salva no localStorage).');
+});
+
+document.getElementById('saveApp').addEventListener('click', ()=>{
+  const obj = {
+    title: document.getElementById('f_title').value,
+    slug: document.getElementById('f_slug').value,
+    tag: document.getElementById('f_tag').value || 'apps',
+    version: document.getElementById('f_version').value,
+    size: document.getElementById('f_size').value,
+    icon: document.getElementById('f_icon').value,
+    download: document.getElementById('f_download').value,
+    screenshots: document.getElementById('f_screens').value ? document.getElementById('f_screens').value.split('|').map(s=>s.trim()) : [],
+    desc: document.getElementById('f_desc').value,
+    fullDesc: document.getElementById('f_fullDesc').value,
+    badges: []
+  };
+  // save to localStorage array
+  const arr = JSON.parse(localStorage.getItem('gh_local_apps')||'[]');
+  // replace same slug if exists
+  const idx = arr.findIndex(a=>a.slug===obj.slug);
+  if(idx>=0) arr[idx]=obj; else arr.unshift(obj);
+  localStorage.setItem('gh_local_apps', JSON.stringify(arr));
+  alert('App salvo localmente. Atualize a página para ver (ou clique em "Exportar JSON" para copiar).');
+  // re-init
+  initApp();
+});
+
+document.getElementById('exportJson').addEventListener('click', ()=>{
+  // combine original apps + local
+  const combined = window.APPS || [];
+  const txt = JSON.stringify(combined, null, 2);
+  prompt('Copie o JSON (cole no apps.js como window.APPS = ...):', txt);
+});
+
+document.getElementById('importJsonBtn').addEventListener('click', ()=>{
+  const text = prompt('Cole aqui o JSON para importar (formato array de apps):');
+  try{
+    const arr = JSON.parse(text);
+    if(Array.isArray(arr)) {
+      localStorage.setItem('gh_local_apps', JSON.stringify(arr));
+      alert('Importado para localStorage. Atualize a página.');
+      initApp();
+    } else alert('Formato inválido.');
+  }catch(e){ alert('JSON inválido'); }
+});
+
+/* export/import helpers done */
+
+/* keyboard admin shortcut */
+document.addEventListener('keydown', e=>{
+  if(e.ctrlKey && e.shiftKey && e.key.toLowerCase()==='a'){ openAdmin(); }
+});
+
+/* service worker registration for PWA (if supported) */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(()=>console.log('SW registrado')).catch(()=>{});
+}
+
+/* handle popstate on back/forward */
+window.addEventListener('popstate', ()=>{
+  if(location.hash.startsWith('#/app/')) openDetailBySlug(decodeURIComponent(location.hash.replace('#/app/','')));
+  else closeDetail();
+});
+
 </script>
 
 </body>
