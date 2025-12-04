@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GameHub Central</title>
+<meta name="description" content="GameHub Central — loja de apps e mods mobile." />
+<style>
+  :root{
+    --bg1:#0f0520;
+    --accent1:#7c3aed;
+    --accent2:#a78bfa;
+    --glass: rgba(255,255,255,0.04);
+    --muted:#cfcbe2;
+    --text:#e9e6f7;
+    --card-radius:12px;
+    --maxw:1100px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:
+    radial-gradient(ellipse at 10% 0%, rgba(124,58,237,0.14), transparent 10%),
+    radial-gradient(ellipse at 100% 100%, rgba(167,139,250,0.06), transparent 10%),
+    var(--bg1);color:var(--text)}
+  .wrap{max-width:var(--maxw);margin:28px auto;padding:0 16px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{
+    width:56px;height:56px;border-radius:12px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--accent1),#5b21b6);overflow:hidden;
+    box-shadow:0 6px 24px rgba(124,58,237,0.18);
+  }
+  .logo img{width:100%;height:100%;object-fit:cover;display:block}
+  h1{font-size:20px;margin:0}
+
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .search{display:flex;align-items:center;background:rgba(255,255,255,0.02);padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.03)}
+  .search input{border:0;background:transparent;outline:0;color:var(--text);width:220px;font-size:14px}
+  .select{background:transparent;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);color:var(--muted)}
+  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:8px 12px;border-radius:8px;border:0;cursor:pointer;font-weight:700;text-decoration:none}
+
+  main{margin-top:18px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border-radius:var(--card-radius);overflow:hidden;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,0.03);
+        box-shadow:0 6px 26px rgba(6,6,12,0.6);transition:transform .18s,box-shadow .18s;backdrop-filter: blur(6px)}
+  .card:hover{transform:translateY(-8px);box-shadow:0 22px 60px rgba(7,7,15,0.7)}
+  .thumb{height:140px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent1);font-size:36px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .card-body{padding:14px;display:flex;flex-direction:column;flex:1}
+  .tag{font-size:11px;color:var(--accent2);font-weight:800;text-transform:uppercase;margin-bottom:6px}
+  .title{font-size:16px;font-weight:800;margin-bottom:8px}
+  .desc{font-size:13px;color:var(--muted);flex:1;margin-bottom:10px}
+  .meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .link{font-size:13px;color:var(--accent1);text-decoration:none;padding:8px 10px;border-radius:8px;border:1px solid rgba(124,58,237,0.12);font-weight:700;background:transparent}
+  .download{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0}
+  .empty{padding:28px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.03);color:var(--muted);text-align:center}
+
+  /* MODAL / DETAIL */
+  .overlay{position:fixed;inset:0;background:rgba(2,2,6,0.6);display:none;align-items:center;justify-content:center;z-index:40;padding:20px}
+  .panel{width:980px;max-width:100%;max-height:92vh;overflow:auto;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border:1px solid rgba(255,255,255,0.04)}
+  .panel .hero{height:260px;border-radius:10px;overflow:hidden;background:#111;display:flex;align-items:center;justify-content:center;color:var(--muted);margin-bottom:12px}
+  .panel h2{margin:6px 0 8px}
+  .panel p{color:var(--muted)}
+  .screenshot{width:160px;height:90px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+  .close{position:absolute;right:22px;top:18px;background:transparent;border:0;color:var(--muted);font-size:22px;cursor:pointer}
+
+  .copy-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;margin-left:8px}
+
+  /* mobile */
+  @media (max-width:560px){
+    .search input{width:110px}
+    header{gap:8px}
+    .panel{padding:12px}
+    .panel .hero{height:160px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo">
+          <img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="GameHub Central Logo" />
+        </div>
+        <div>
+          <h1>GameHub Central</h1>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search" title="Pesquisar">
+          <svg width="16" height="16" viewBox="0 0 24 24" style="opacity:.7;margin-right:8px"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 104.47 11.13l4.95 4.95 1.41-1.41-4.95-4.95A6.5 6.5 0 009.5 3zM5 9.5A4.5 4.5 0 119.5 14 4.5 4.5 0 015 9.5z"/></svg>
+          <input id="q" placeholder="Pesquisar por nome ou descrição"/>
+        </div>
+
+        <select id="filter" class="select" title="Filtrar">
+          <option value="all">Todos</option>
+          <option value="games">Jogos</option>
+          <option value="tools">Ferramentas</option>
+          <option value="mods">Mods</option>
+        </select>
+
+        <button id="clearBtn" class="btn">Limpar</button>
+
+        <!-- BOTÃO INSTAGRAM -->
+        <a href="https://www.instagram.com/gabe.am29?igsh=bDc4dHl3ZGNhcm4y" 
+           target="_blank" 
+           class="btn"
+           style="background:linear-gradient(90deg,#a855f7,#7c3aed);text-decoration:none;">
+           Instagram
+        </a>
+
+      </div>
+    </header>
+
+    <main>
+      <div id="grid" class="grid"></div>
+      <div id="empty" class="empty" style="display:none;margin-top:18px">Nenhum app encontrado.</div>
+    </main>
+  </div>
+
+  <!-- Overlay detalhe -->
+  <div id="overlay" class="overlay">
+    <div class="panel" id="panel">
+      <button class="close" id="closeBtn">✕</button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+<script>
+/* UTILIDADES */
+function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+function byId(id){ return document.getElementById(id); }
+function debounce(fn, t=160){ let to; return (...a)=>{ clearTimeout(to); to=setTimeout(()=>fn(...a), t); }; }
+
+/* RENDER CARDS */
+function makeThumbHTML(app){
+  if(app.icon) return '<div class="thumb"><img src="'+esc(app.icon)+'" alt="" style="width:100%;height:100%;object-fit:cover"></div>';
+  const initials = (app.title||'').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() || 'GH';
+  return '<div class="thumb">'+esc(initials)+'</div>';
+}
+
+function cardHTML(app){
+  const postHash = '#/app/' + encodeURIComponent(app.slug);
+  return `
+    <article class="card">
+      ${makeThumbHTML(app)}
+      <div class="card-body">
+        <div class="tag">${esc(app.tag||'app')}</div>
+        <div class="title">${esc(app.title)}</div>
+        <div class="desc">${esc(app.desc||'')}</div>
+        <div class="meta">
+          <div style="font-size:12px;color:var(--muted)">${esc(app.size||'')}</div>
+          <div>
+            <a class="link" href="${postHash}" data-slug="${esc(app.slug)}">Abrir</a>
+            <a class="link download" href="${esc(app.download || ('files/' + app.slug + '.apk'))}" target="_blank">Download</a>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderGrid(list){
+  const grid = byId('grid'); 
+  const empty = byId('empty');
+  grid.innerHTML = list.map(cardHTML).join('');
+  empty.style.display = list.length ? 'none' : 'block';
+
+  grid.querySelectorAll('a.link').forEach(a=>{
+    const h = a.getAttribute('href');
+    if(h.startsWith('#/app/')){
+      a.addEventListener('click', e=>{
+        e.preventDefault();
+        openDetailBySlug(a.dataset.slug);
+      });
+    }
+  });
+}
+
+/* DETALHE / SUBPÁGINA */
+function openDetailBySlug(slug){
+  const apps = window.APPS || [];
+  const app = apps.find(x => x.slug === slug);
+  if(!app) return;
+
+  history.pushState({slug}, '', '#/app/' + encodeURIComponent(slug));
+  showOverlay(true);
+  populateDetail(app);
+}
+
+function populateDetail(app){
+  const container = byId('detailContent');
+  const screenshots = (app.screenshots || []).map(s=>`<img class="screenshot" src="${esc(s)}">`).join(' ');
+  const dl = esc(app.download || ('files/' + app.slug + '.apk'));
+
+  const copyButtonHTML = `<button id="copyLinkBtn" class="copy-btn">Copiar link</button>`;
+
+  container.innerHTML = `
+    <div class="hero">${screenshots || esc(app.title)}</div>
+    <h2>${esc(app.title)}</h2>
+    <p>${esc(app.desc||'')}</p>
+
+    <p><strong>Versão:</strong> ${esc(app.version||'')} · <strong>Tamanho:</strong> ${esc(app.size||'')}</p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+      <a class="btn" href="${dl}" target="_blank">Baixar</a>
+      ${copyButtonHTML}
+    </div>
+
+    <h3 style="margin-top:18px">Descrição</h3>
+    <p>${esc(app.fullDesc||app.desc||'')}</p>
+  `;
+
+  const copyBtn = byId('copyLinkBtn');
+  copyBtn.onclick = async ()=>{
+    const url = location.origin + location.pathname + '#/app/' + encodeURIComponent(app.slug);
+    try{
+      await navigator.clipboard.writeText(url);
+      copyBtn.textContent = "Copiado!";
+      setTimeout(()=> copyBtn.textContent = "Copiar link", 1600);
+    }catch(e){}
+  };
+}
+
+/* OVERLAY */
+function showOverlay(v){
+  const ov = byId('overlay');
+  ov.style.display = v ? 'flex' : 'none';
+}
+byId('closeBtn').onclick = ()=>{ showOverlay(false); history.pushState({}, '', '#'); };
+byId('overlay').onclick = e=>{ if(e.target===byId('overlay')) byId('closeBtn').click(); };
+
+/* FILTRO + BUSCA */
+const q = byId('q'), filter = byId('filter'), clearBtn = byId('clearBtn');
+function filterAndSearch(){
+  const term = (q.value||'').toLowerCase();
+  const tag = filter.value;
+  const apps = window.APPS || [];
+
+  const res = apps.filter(a=>{
+    if(tag!=='all' && a.tag!==tag) return false;
+    return (a.title+' '+(a.desc||'')+' '+(a.fullDesc||'')).toLowerCase().includes(term);
+  });
+  renderGrid(res);
+}
+q.oninput = debounce(filterAndSearch,160);
+filter.onchange = filterAndSearch;
+clearBtn.onclick = ()=>{ q.value=''; filter.value='all'; filterAndSearch(); };
+
+/* POPSTATE */
+window.onpopstate = ()=>{ 
+  if(location.hash.startsWith('#/app/')){
+    openDetailBySlug(decodeURIComponent(location.hash.replace('#/app/','')));
+  } else showOverlay(false);
+};
+
+/* AGUARDAR apps.js */
+function init(){
+  if(window.APPS){ filterAndSearch(); if(location.hash.startsWith('#/app/')) openDetailBySlug(decodeURIComponent(location.hash.replace('#/app/',''))); }
+  else setTimeout(init,60);
+}
+init();
+</script>
+
+<script src="apps.js"></script>
+
+</body>
+</html>
