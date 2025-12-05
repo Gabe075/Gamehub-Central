@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>GameHub Central — Nova Era</title>
+<meta name="description" content="GameHub Central — layout original, criativo e leve" />
+<style>
+:root{
+  --bg:#0b0710;
+  --panel:#0f0c18;
+  --glass: rgba(255,255,255,0.04);
+  --accent1:#8b4bff;
+  --accent2:#b889ff;
+  --muted:#cfcbe2;
+  --text:#f6f3ff;
+  --card-radius:14px;
+  --maxw:1200px;
+}
+/* base */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:
+  radial-gradient(800px 300px at 8% 6%, rgba(139,75,255,0.06), transparent 8%), var(--bg); color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.container{max-width:var(--maxw);margin:18px auto;padding:18px;display:grid;grid-template-columns:220px 1fr 360px;gap:18px;align-items:start}
+
+/* left nav (minimap) */
+.nav{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);height:calc(100vh - 64px);position:sticky;top:18px;overflow:auto;
+}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.brand .logo{width:48px;height:48px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--accent1),#5b21b6);display:grid;place-items:center}
+.brand img{width:100%;height:100%;object-fit:cover}
+.brand h1{font-size:16px;margin:0;font-weight:800}
+.small{color:var(--muted);font-size:13px}
+
+/* tag chips */
+.tags{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.tag-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid transparent;color:var(--muted)}
+.tag-chip.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border-color:rgba(255,255,255,0.06);box-shadow:0 8px 24px rgba(139,75,255,0.08)}
+
+/* center content (feed) */
+.feed-wrap{display:flex;flex-direction:column;gap:12px}
+.header-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.searchbar{display:flex;align-items:center;gap:8px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);width:100%}
+.searchbar input{background:transparent;border:0;outline:0;color:var(--text);width:420px;padding:6px 8px}
+.controls{display:flex;gap:8px}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:16px;
+  align-items:start;
+}
+
+/* large visual card style (creative) */
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.008));
+  border-radius:var(--card-radius);
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.03);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  transition:transform .22s ease, box-shadow .22s ease;
+  position:relative;
+}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 60px rgba(99,45,255,0.12)}
+.card .hero{
+  height:180px;background:#050307;display:grid;place-items:center;overflow:hidden;
+}
+.card .hero img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.card:hover .hero img{transform:scale(1.03)}
+.card .body{padding:12px;display:flex;flex-direction:column;gap:8px}
+.card .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.title{font-weight:800;font-size:16px}
+.lead{color:var(--muted);font-size:13px}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{padding:6px 8px;border-radius:999px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:800;font-size:12px}
+
+/* floating actions inside card */
+.card .f-actions{display:flex;gap:8px;align-items:center}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+.btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));padding:10px 14px;border-radius:10px;color:#fff;border:0;font-weight:800;cursor:pointer}
+
+/* right detail panel (slide-in) */
+.detail-panel{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);position:sticky;top:18px;height:calc(100vh - 64px);overflow:auto;
+}
+.detail-panel h3{margin:0 0 8px 0}
+.screens{display:flex;gap:8px;overflow:auto;padding-top:8px}
+
+/* floating Add */
+.fab{position:fixed;right:20px;bottom:20px;width:64px;height:64px;border-radius:16px;background:linear-gradient(90deg,var(--accent1),var(--accent2));display:grid;place-items:center;font-weight:900;color:#fff;cursor:pointer;z-index:110;box-shadow:0 20px 60px rgba(139,75,255,0.16)}
+
+/* modals (editor) */
+.modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.6));z-index:120;padding:18px}
+.modal{width:920px;max-width:100%;background:linear-gradient(180deg, rgba(8,6,12,0.98), rgba(18,12,28,0.98));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
+
+/* small */
+.kv{color:var(--muted);font-size:13px}
+.help{color:var(--muted);font-size:13px;margin-top:8px}
+
+/* responsive */
+@media (max-width:1080px){ .container{grid-template-columns:180px 1fr 320px} .searchbar input{width:260px} }
+@media (max-width:880px){ .container{grid-template-columns:1fr; } .grid{grid-template-columns:1fr} .detail-panel{order:3} .nav{display:none}}
+</style>
+</head>
+<body>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <!-- LEFT NAV -->
+  <nav class="nav" aria-label="Navegação">
+    <div class="brand">
+      <div class="logo"><img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="logo"></div>
+      <div>
+        <h1>GameHub</h1>
+        <div class="small">Central • Mods & Apps</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="kv">Favoritos</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <a class="btn-primary" href="https://www.instagram.com/gabe.am29?igsh=bDc4dHl3ZGNhcm4y" target="_blank" style="flex:1;text-align:center;font-size:13px">Instagram</a>
+        <a class="btn-primary" href="https://chat.whatsapp.com/Kma7lW0piMU8njwKvqo5e1?mode=hqrc" target="_blank" style="flex:1;text-align:center;font-size:13px">WhatsApp</a>
+      </div>
+    </div>
+
+    <div style="margin-top:18px">
+      <div class="kv">Filtrar por tag</div>
+      <div class="tags" id="leftTags">
+        <!-- chips preenchidos via JS -->
+      </div>
+    </div>
+
+    <div style="margin-top:18px">
+      <div class="kv">Sobre</div>
+      <div class="help">Editor em memória — use Exportar JSON para copiar posts e colar em apps.js.</div>
+    </div>
+  </nav>
+
+  <!-- CENTER FEED -->
+  <main class="feed-wrap" id="feedArea">
+    <div class="header-row">
+      <div class="searchbar">
+        <svg width="18" height="18" viewBox="0 0 24 24" style="opacity:.7"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 104.47 11.13l4.95 4.95 1.41-1.41-4.95-4.95A6.5 6.5 0 009.5 3zM5 9.5A4.5 4.5 0 119.5 14 4.5 4.5 0 015 9.5z"/></svg>
+        <input id="searchInput" placeholder="Pesquisar por nome, descrição ou tag">
+      </div>
+      <div class="controls">
+        <select id="sortSelect" title="Ordenar">
+          <option value="recent">Recentes</option>
+          <option value="size">Tamanho</option>
+          <option value="name">A-Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite">
+      <!-- cards gerados pelo JS -->
+    </div>
+  </main>
+
+  <!-- RIGHT DETAIL PANEL -->
+  <aside class="detail-panel" id="detailPanel">
+    <div id="detailEmpty">
+      <div class="kv">Detalhe</div>
+      <h3 style="margin-top:8px">Selecione um app</h3>
+      <div class="lead" style="margin-top:8px">Clique em qualquer card para abrir o painel de detalhes aqui. Use o botão “＋” para adicionar posts (em memória).</div>
+    </div>
+    <div id="detailContent" style="display:none"></div>
+  </aside>
+</div>
+
+<!-- FAB add -->
+<button class="fab" id="openAdd" title="Adicionar">＋</button>
+
+<!-- Edit modal (in-memory) -->
+<div class="modal-wrap" id="modalWrap" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <strong>Adicionar / Editar (memória)</strong>
+      <div style="display:flex;gap:8px">
+        <button id="exportBtn" class="btn-ghost">Exportar JSON</button>
+        <button id="closeModal" class="btn-ghost">Fechar</button>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <input id="m_title" placeholder="Título — obrigatório">
+      <div style="display:flex;gap:8px">
+        <input id="m_slug" placeholder="slug (ex: dramabox)" style="width:50%">
+        <input id="m_tag" placeholder="tag (ex: apps)" style="width:50%">
+      </div>
+      <div style="display:flex;gap:8px">
+        <input id="m_version" placeholder="versão" style="width:50%">
+        <input id="m_size" placeholder="tamanho" style="width:50%">
+      </div>
+      <input id="m_icon" placeholder="URL do ícone (opcional)">
+      <input id="m_download" placeholder="URL de download (opcional)">
+      <input id="m_screens" placeholder="screenshots — separar por | ">
+      <textarea id="m_desc" rows="3" placeholder="descrição curta"></textarea>
+      <textarea id="m_full" rows="4" placeholder="descrição longa"></textarea>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="applyBtn" class="btn-primary">Aplicar (visível na página)</button>
+      </div>
+      <div class="help">Aplicar apenas mantém em memória. Use Exportar JSON para copiar tudo e colar em <code>apps.js</code>.</div>
+    </div>
+  </div>
+</div>
+
+<!-- NO storage code, only loader and runtime state -->
+<script>
+/* --- Carrega apps.js sem cache (apps.js é fonte única inicial) --- */
+(async function(){
+  try{
+    const res = await fetch('apps.js?t=' + Date.now(), { cache: 'no-store' });
+    if(!res.ok) throw new Error('apps.js não encontrado');
+    const js = await res.text();
+    const blob = new Blob([js], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const s = document.createElement('script'); s.src = url;
+    s.onload = ()=>{ URL.revokeObjectURL(url); start(); };
+    document.body.appendChild(s);
+  }catch(e){
+    console.error('Erro carregando apps.js', e);
+    const s = document.createElement('script'); s.src='apps.js'; s.onload=start; document.body.appendChild(s);
+  }
+})();
+
+/* --- Helpers --- */
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+function q(id){ return document.getElementById(id); }
+function debounce(fn,t=160){ let to; return (...a)=>{ clearTimeout(to); to=setTimeout(()=>fn(...a),t); }; }
+
+/* --- Runtime state (in-memory only) --- */
+let MEM = []; // posts added via editor only in-memory
+// APPS will be loaded from apps.js; ensure exists
+function baseApps(){ return Array.isArray(window.APPS) ? window.APPS.slice() : []; }
+function mergedApps(){
+  const map = {};
+  baseApps().forEach(a=> map[a.slug]=a);
+  MEM.forEach(a=> map[a.slug]=a); // MEM overrides
+  return Object.values(map);
+}
+
+/* --- Rendering --- */
+function start(){
+  if(!Array.isArray(window.APPS)) window.APPS = [];
+  renderEverything();
+  attachUI();
+  if(location.hash.startsWith('#/app/')) setTimeout(()=> openDetail(decodeURIComponent(location.hash.replace('#/app/',''))), 250);
+}
+
+function renderEverything(){
+  renderTags();
+  renderGrid(mergedApps());
+  clearDetail();
+}
+
+/* creative tags (left) */
+function renderTags(){
+  const apps = mergedApps();
+  const tags = Array.from(new Set(apps.map(a=>a.tag).filter(Boolean)));
+  const left = q('leftTags'); left.innerHTML = '';
+  const allChip = chip('Todos', 'all'); left.appendChild(allChip);
+  tags.forEach(t=>{
+    left.appendChild(chip(t, t));
+  });
+
+  // attach click: toggle active filter
+  left.querySelectorAll('.tag-chip').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const val = el.dataset.val;
+      // toggle active: if already active -> clear
+      if(el.classList.contains('active')){
+        clearTagFilter();
+      } else {
+        setTagFilter(val);
+      }
+    });
+  });
+  // initial state none active
+}
+
+/* create chip element */
+function chip(label, val){
+  const el = document.createElement('div');
+  el.className = 'tag-chip';
+  el.dataset.val = val;
+  el.textContent = label;
+  return el;
+}
+
+/* set tag filter based on left chips */
+function setTagFilter(val){
+  // clear all
+  q('leftTags').querySelectorAll('.tag-chip').forEach(c=>c.classList.remove('active'));
+  // find chip
+  const target = Array.from(q('leftTags').children).find(c=>c.dataset.val===val);
+  if(target) target.classList.add('active');
+  applyFilters();
+}
+function clearTagFilter(){ q('leftTags').querySelectorAll('.tag-chip').forEach(c=>c.classList.remove('active')); applyFilters(); }
+
+/* render grid */
+function renderGrid(list){
+  const container = q('grid');
+  const search = q('searchInput').value.trim().toLowerCase();
+  const sort = q('sortSelect').value;
+  const tagActiveEl = Array.from(q('leftTags').children).find(c=>c.classList.contains('active'));
+  const tagActive = tagActiveEl ? tagActiveEl.dataset.val : null;
+
+  // filter
+  let items = list.filter(a=>{
+    if(tagActive && tagActive!=='all') return (a.tag||'') === tagActive;
+    if(!search) return true;
+    return (a.title+' '+(a.desc||'')+' '+(a.fullDesc||'')+' '+(a.tag||'')).toLowerCase().includes(search);
+  });
+
+  // sort
+  if(sort==='recent') items = items.sort((a,b)=> (b.timestamp||0)-(a.timestamp||0));
+  if(sort==='name') items = items.sort((a,b)=> (a.title||'').localeCompare(b.title||''));
+  if(sort==='size') items = items.sort((a,b)=> parseSize(b.size) - parseSize(a.size));
+
+  if(!items.length){ container.innerHTML = '<div style="color:var(--muted)">Nenhum app encontrado.</div>'; return; }
+
+  container.innerHTML = items.map(a=>`
+    <div class="card" data-slug="${esc(a.slug)}">
+      <div class="hero">${a.screenshots && a.screenshots[0] ? '<img src="'+esc(a.screenshots[0])+'">' : (a.icon?'<img src="'+esc(a.icon)+'">':'')}</div>
+      <div class="body">
+        <div class="row">
+          <div class="title">${esc(a.title)}</div>
+          <div class="badges">${(a.badges||[]).map(b=>'<span class="badge">'+esc(b)+'</span>').join('')}</div>
+        </div>
+        <div class="lead">${esc(a.desc||'')}</div>
+        <div class="row" style="align-items:center">
+          <div class="kv">${esc(a.version||'')} · ${esc(a.size||'')}</div>
+          <div class="f-actions">
+            <a class="btn-primary" href="${esc(a.download||('files/'+a.slug+'.apk'))}" target="_blank">Download</a>
+            <button class="btn-ghost" data-open="${esc(a.slug)}">Abrir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // attach events
+  container.querySelectorAll('[data-open]').forEach(btn=> btn.addEventListener('click', e=> { const s=btn.dataset.open; openDetail(s); }));
+  container.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', e=>{
+      if(e.target.closest('a') || e.target.closest('button')) return;
+      const s = card.dataset.slug;
+      openDetail(s);
+    });
+  });
+}
+
+/* parse human size "27 MB" -> numeric MB */
+function parseSize(s){
+  if(!s) return 0;
+  const m = s.match(/([\d\.]+)\s*MB/i);
+  if(m) return parseFloat(m[1]);
+  const k = s.match(/([\d\.]+)\s*KB/i);
+  if(k) return parseFloat(k[1]) / 1024;
+  return 0;
+}
+
+/* apply filters from UI */
+function applyFilters(){ renderGrid(mergedApps()); }
+
+/* render right bar items */
+function renderRightPanel(app){ 
+  const el = q('detailContent');
+  if(!app){ q('detailEmpty').style.display='block'; el.style.display='none'; return; }
+  q('detailEmpty').style.display='none';
+  el.style.display='block';
+  const screens = (app.screenshots||[]).map(s=>`<img src="${esc(s)}" style="width:140px;height:90px;object-fit:cover;border-radius:8px;margin-right:8px">`).join('');
+  el.innerHTML = `
+    <h3>${esc(app.title)}</h3>
+    <div class="kv">${esc(app.version||'')} · ${esc(app.size||'')}</div>
+    <p style="color:var(--muted);margin-top:10px">${esc(app.desc||'')}</p>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <a class="btn-primary" href="${esc(app.download||('files/'+app.slug+'.apk'))}" target="_blank">Baixar</a>
+      <button id="copyLink" class="btn-ghost">Copiar link</button>
+    </div>
+    <div style="margin-top:14px"><strong>Screenshots</strong>
+      <div class="screens" style="margin-top:8px">${screens}</div></div>
+    <div style="margin-top:12px;color:var(--muted)"><strong>Descrição completa</strong><div style="margin-top:6px">${esc(app.fullDesc||app.desc||'')}</div></div>
+  `;
+  const btn = q('copyLink');
+  if(btn){ btn.onclick = async ()=>{ await navigator.clipboard.writeText(location.origin + location.pathname + '#/app/' + encodeURIComponent(app.slug)); btn.textContent='Copiado!'; setTimeout(()=>btn.textContent='Copiar link',1200); } }
+}
+
+/* clear right panel */
+function clearDetail(){ q('detailEmpty').style.display='block'; q('detailContent').style.display='none'; }
+
+/* open detail (fills right panel) */
+function openDetail(slug){
+  const app = mergedApps().find(a=>a.slug === slug);
+  if(!app) return;
+  renderRightPanel(app);
+  history.pushState({slug}, '', '#/app/' + encodeURIComponent(app.slug));
+}
+
+/* --- Editor modal behavior (in-memory) --- */
+function attachUI(){
+  q('openAdd').addEventListener('click', ()=> { q('modalWrap').style.display='flex'; q('modalWrap').setAttribute('aria-hidden','false'); });
+  q('closeModal').addEventListener('click', ()=> { q('modalWrap').style.display='none'; q('modalWrap').setAttribute('aria-hidden','true'); });
+  q('applyBtn').addEventListener('click', applyEditor);
+  q('exportBtn').addEventListener('click', exportJSON);
+  q('searchInput').addEventListener('input', debounce(()=> applyFilters(), 160));
+  q('sortSelect').addEventListener('change', ()=> applyFilters());
+}
+
+/* apply editor values into MEM (in-memory) */
+function applyEditor(){
+  const title = q('m_title').value.trim();
+  const slug = q('m_slug').value.trim();
+  if(!title || !slug){ alert('Título e slug são obrigatórios'); return; }
+  const obj = {
+    title,
+    slug,
+    desc: q('m_desc').value.trim(),
+    fullDesc: q('m_full').value.trim(),
+    tag: q('m_tag').value.trim() || 'apps',
+    version: q('m_version').value.trim(),
+    size: q('m_size').value.trim(),
+    download: q('m_download').value.trim(),
+    icon: q('m_icon').value.trim(),
+    screenshots: q('m_screens').value ? q('m_screens').value.split('|').map(s=>s.trim()).filter(Boolean) : [],
+    badges: [],
+    highlight: false,
+    timestamp: Date.now()
+  };
+  // replace or push
+  const idx = MEM.findIndex(a=>a.slug === obj.slug);
+  if(idx>=0) MEM[idx] = obj; else MEM.unshift(obj);
+  // close modal and re-render
+  q('modalWrap').style.display='none'; q('modalWrap').setAttribute('aria-hidden','true');
+  renderEverything();
+  alert('Post aplicado na página (memória). Use Exportar JSON para salvar permanentemente em apps.js.');
+}
+
+/* export JSON (combined) and copy to clipboard */
+function exportJSON(){
+  const combined = mergedApps();
+  const text = '/* Copie e cole este JSON em apps.js como window.APPS = ... */\n' + JSON.stringify(combined, null, 2);
+  navigator.clipboard.writeText(text).then(()=> alert('JSON copiado. Cole no apps.js substituindo window.APPS = [...]'), ()=> { prompt('Copie o JSON abaixo e cole em apps.js:', text); });
+}
+
+/* open by hash on load */
+window.addEventListener('load', ()=> { if(location.hash.startsWith('#/app/')) setTimeout(()=> openDetail(decodeURIComponent(location.hash.replace('#/app/',''))), 200); });
+
+</script>
+</body>
+          </html>
