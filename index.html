@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GameHub Central</title>
+<meta name="description" content="GameHub Central — mini-site de apps (mobile)"/>
+<style>
+:root{
+  --bg:#0b0712;
+  --panel:#0f0c18;
+  --accent1:#7c3aed;
+  --accent2:#b889ff;
+  --muted:#cfcbe2;
+  --text:#f1ecff;
+  --card-radius:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,Roboto,Arial;background:
+  radial-gradient(600px 220px at 10% 4%, rgba(124,58,237,0.06), transparent 6%),var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.app{max-width:480px;margin:0 auto;padding:12px}
+
+/* top */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.hamb{width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));display:grid;place-items:center;border:0;color:#fff;font-weight:800}
+.logo{width:46px;height:46px;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--accent1),#5b21b6);display:grid;place-items:center}
+.logo img{width:100%;height:100%;object-fit:cover}
+.title{font-weight:800;font-size:16px}
+.subtitle{font-size:12px;color:var(--muted)}
+
+/* search */
+.search{display:flex;gap:8px;align-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03)}
+.search input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:14px}
+
+/* list */
+.list{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.card{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.03)}
+.thumb{width:92px;height:72px;border-radius:8px;background:#040406;overflow:hidden;flex-shrink:0}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.info{flex:1}
+.title-card{font-weight:800}
+.desc{color:var(--muted);font-size:13px;margin-top:6px}
+.meta{color:var(--muted);font-size:13px;margin-top:8px}
+.actions{display:flex;gap:8px;align-items:center}
+
+/* floating buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;font-weight:800}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+
+/* sidebar (slide-in) */
+.sidebar{position:fixed;left:-320px;top:0;height:100%;width:320px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-right:1px solid rgba(255,255,255,0.03);padding:16px;transition:left .25s ease;z-index:150}
+.sidebar.open{left:0}
+.close-sb{background:transparent;border:0;color:var(--muted);font-size:18px}
+
+/* detail page full */
+.detail-page{position:fixed;inset:0;background:linear-gradient(180deg, rgba(3,2,6,0.95), rgba(8,6,12,0.98));z-index:160;display:none;overflow:auto;padding:18px}
+.detail-inner{max-width:980px;margin:10px auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03)}
+.detail-hero{height:260px;border-radius:10px;overflow:hidden;background:#040406}
+.detail-hero img{width:100%;height:100%;object-fit:cover}
+.detail-title{font-weight:800;font-size:18px;margin-top:10px}
+.detail-body{color:var(--muted);margin-top:8px;line-height:1.5}
+.screens{display:flex;gap:8px;overflow:auto;margin-top:10px}
+.screens img{width:220px;height:120px;object-fit:cover;border-radius:8px}
+
+/* small */
+.kv{color:var(--muted);font-size:13px}
+
+/* responsive */
+@media(max-width:420px){
+  .sidebar{width:100%;left:-100%}
+}
+
+/* focus */
+button:focus,input:focus{outline:2px solid rgba(124,58,237,0.18);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="top">
+    <button id="openSidebar" class="hamb" aria-label="menu">≡</button>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo"><img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="logo"></div>
+      <div>
+        <div class="title">GameHub Central</div>
+        <div class="subtitle">Mods, apps e utilitários</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search" role="search">
+    <svg width="16" height="16" viewBox="0 0 24 24" style="opacity:.6;margin-right:6px"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 104.47 11.13l4.95 4.95 1.41-1.41-4.95-4.95A6.5 6.5 0 009.5 3zM5 9.5A4.5 4.5 0 119.5 14 4.5 4.5 0 015 9.5z"/></svg>
+    <input id="q" placeholder="Pesquisar por nome, descrição ou tag">
+    <button id="copyLink" class="btn ghost" title="Copiar link">Compartilhar</button>
+  </div>
+
+  <div class="list" id="list"></div>
+</div>
+
+<!-- Sidebar -->
+<nav id="sidebar" class="sidebar" aria-hidden="true">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="logo"><img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="logo"></div>
+      <div>
+        <div style="font-weight:800">GameHub Central</div>
+        <div class="kv">Links e pesquisa</div>
+      </div>
+    </div>
+    <button id="closeSidebar" class="close-sb" aria-label="fechar">✕</button>
+  </div>
+
+  <div style="margin-bottom:12px">
+    <label class="kv">Pesquisar</label>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="sideQ" placeholder="Buscar..." style="flex:1;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--text)">
+      <button id="sideGo" class="btn ghost">Ir</button>
+    </div>
+  </div>
+
+  <div style="margin-bottom:12px">
+    <label class="kv">Redes sociais</label>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+      <a href="https://www.instagram.com/gabe.am29?igsh=bDc4dHl3ZGNhcm4y" target="_blank" style="display:flex;gap:8px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff">
+        <!-- instagram svg -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z" stroke="#fff" stroke-width="1.2"/></svg>
+        Instagram
+      </a>
+      <a href="https://chat.whatsapp.com/Kma7lW0piMU8njwKvqo5e1?mode=hqrc" target="_blank" style="display:flex;gap:8px;align-items:center;padding:10px;border-radius:10px;background:#25D366;color:#fff">
+        <!-- whatsapp svg -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 12.1a9 9 0 10-2.6 6.1L21 22l-2.1-6.9A8.9 8.9 0 0021 12.1z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Grupo WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;color:var(--muted);font-size:13px">GameHub Central • Mobile</div>
+</nav>
+
+<!-- full-page detail -->
+<div id="detailPage" class="detail-page" aria-hidden="true">
+  <div class="detail-inner" id="detailInner"></div>
+</div>
+
+<script>
+/* Carrega apps.js sem cache (APPS é a fonte única) */
+(async function(){
+  try{
+    const res = await fetch('apps.js?t=' + Date.now(), { cache: 'no-store' });
+    if(!res.ok) throw new Error('apps.js não encontrado');
+    const js = await res.text();
+    const blob = new Blob([js], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const s = document.createElement('script'); s.src = url;
+    s.onload = ()=>{ URL.revokeObjectURL(url); init(); };
+    document.body.appendChild(s);
+  }catch(e){
+    console.error('Erro ao carregar apps.js', e);
+    const s = document.createElement('script'); s.src='apps.js'; s.onload=init; document.body.appendChild(s);
+  }
+})();
+
+/* Helpers */
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+function q(id){ return document.getElementById(id); }
+function debounce(fn,t=160){ let to; return (...a)=>{ clearTimeout(to); to=setTimeout(()=>fn(...a),t); }; }
+
+/* Main */
+function init(){
+  if(!Array.isArray(window.APPS)) window.APPS = [];
+  renderList();
+  attachUI();
+  if(location.hash.startsWith('#/app/')) openDetail(decodeURIComponent(location.hash.replace('#/app/','')));
+}
+
+function getApps(){ return Array.isArray(window.APPS) ? window.APPS.slice().sort((a,b)=> (b.highlight?1:0)-(a.highlight?1:0) || (b.timestamp||0)-(a.timestamp||0)) : []; }
+
+function renderList(){
+  const apps = getApps();
+  const list = q('list');
+  const qv = q('q').value.trim().toLowerCase();
+  const filtered = apps.filter(a=> {
+    if(!qv) return true;
+    return (a.title+' '+(a.desc||'')+' '+(a.fullDesc||'')+' '+(a.tag||'')).toLowerCase().includes(qv);
+  });
+  if(!filtered.length){ list.innerHTML = '<div style="color:var(--muted)">Nenhum app encontrado.</div>'; return; }
+  list.innerHTML = filtered.map(a=>`
+    <div class="card" data-slug="${esc(a.slug)}">
+      <div class="thumb">${a.icon?'<img src="'+esc(a.icon)+'">':''}</div>
+      <div class="info">
+        <div class="title-card">${esc(a.title)} ${(a.badges||[]).map(b=>'<span class="kv" style="margin-left:6px;padding:4px 8px;border-radius:999px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:800;font-size:12px">'+esc(b)+'</span>').join('')}</div>
+        <div class="desc">${esc(a.desc||'')}</div>
+        <div class="meta">${esc(a.version||'')} · ${esc(a.size||'')}</div>
+      </div>
+      <div class="actions">
+        <a class="btn" href="${esc(a.download||('files/'+a.slug+'.apk'))}" target="_blank">Download</a>
+        <button class="btn ghost" data-open="${esc(a.slug)}">Abrir</button>
+      </div>
+    </div>
+  `).join('');
+  // attach open
+  q('list').querySelectorAll('[data-open]').forEach(btn=> btn.addEventListener('click', e=> openDetail(btn.dataset.open)));
+  q('list').querySelectorAll('.card').forEach(c=> c.addEventListener('click', e=> { if(e.target.closest('a')||e.target.closest('button')) return; openDetail(c.dataset.slug); }));
+}
+
+/* open full detail page */
+function openDetail(slug){
+  const app = getApps().find(a=>a.slug===slug);
+  if(!app) return;
+  const dp = q('detailPage');
+  const inner = q('detailInner');
+  const screens = (app.screenshots||[]).map(s=>`<img src="${esc(s)}">`).join('');
+  inner.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button id="backBtn" class="btn ghost">← Voltar</button>
+      <div style="display:flex;gap:8px">
+        <a class="btn" href="${esc(app.download||('files/'+app.slug+'.apk'))}" target="_blank">Baixar</a>
+        <button id="copyLinkBtn" class="btn ghost">Copiar link</button>
+      </div>
+    </div>
+    <div class="detail-hero" style="margin-top:12px">${app.screenshots && app.screenshots[0] ? '<img src="'+esc(app.screenshots[0])+'">' : (app.icon?'<img src="'+esc(app.icon)+'">':'')}</div>
+    <div class="detail-title">${esc(app.title)}</div>
+    <div class="kv">${esc(app.version||'')} · ${esc(app.size||'')}</div>
+    <div class="detail-body">${esc(app.fullDesc || app.desc || '')}</div>
+    <div style="margin-top:12px"><strong>Screenshots</strong><div class="screens" style="margin-top:8px">${screens}</div></div>
+  `;
+  dp.style.display = 'block';
+  dp.setAttribute('aria-hidden','false');
+  q('backBtn').addEventListener('click', ()=> { dp.style.display='none'; dp.setAttribute('aria-hidden','true'); history.pushState({},'', location.pathname); });
+  q('copyLinkBtn').addEventListener('click', async ()=> { const url = location.origin + location.pathname + '#/app/' + encodeURIComponent(app.slug); try{ await navigator.clipboard.writeText(url); q('copyLinkBtn').textContent='Copiado!'; setTimeout(()=> q('copyLinkBtn').textContent='Copiar link',1400); }catch(e){} });
+  history.pushState({slug}, '', '#/app/' + encodeURIComponent(app.slug));
+}
+
+/* UI */
+function attachUI(){
+  q('openSidebar').addEventListener('click', ()=> { q('sidebar').classList.add('open'); q('sidebar').setAttribute('aria-hidden','false'); });
+  q('closeSidebar').addEventListener('click', ()=> { q('sidebar').classList.remove('open'); q('sidebar').setAttribute('aria-hidden','true'); });
+  q('sideGo').addEventListener('click', ()=> { q('q').value = q('sideQ').value; renderList(); q('sidebar').classList.remove('open'); });
+  q('sideQ').addEventListener('input', ()=> { q('q').value = q('sideQ').value; });
+  q('q').addEventListener('input', debounce(()=> renderList(), 180));
+  q('copyLink').addEventListener('click', async ()=> { try{ await navigator.clipboard.writeText(location.href); q('copyLink').textContent='✓'; setTimeout(()=> q('copyLink').textContent='Compartilhar',1200); }catch(e){ alert('Não foi possível copiar.'); } });
+}
+
+/* expose for debugging */
+window.getApps = getApps;
+</script>
+</body>
+</html>
