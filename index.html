@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GameHub Central</title>
+<meta name="description" content="GameHub Central — mods, apps e GameHub Games (tudo em um arquivo)"/>
+<style>
+:root{
+  --bg:#0b0712;
+  --panel:#0f0c18;
+  --accent1:#7c3aed;
+  --accent2:#b889ff;
+  --muted:#cfcbe2;
+  --text:#f1ecff;
+  --card-radius:14px;
+  --sidebar-w:320px;
+  --btn-h:44px;
+  --maxw:1100px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,Roboto,Arial;background:
+  radial-gradient(800px 300px at 8% 6%, rgba(139,75,255,0.06), transparent 8%), var(--bg); color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.container{max-width:var(--maxw);margin:16px auto;padding:12px}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:56px;height:56px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:grid;place-items:center}
+.logo img{width:100%;height:100%;object-fit:cover}
+.title{font-weight:800;font-size:18px}
+.subtitle{color:var(--muted);font-size:13px}
+
+/* Controls */
+.controls{display:flex;gap:10px;align-items:center}
+.select{padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));border:0;color:#fff;font-weight:800}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:1fr 320px;gap:20px}
+@media(max-width:900px){ .layout{grid-template-columns:1fr} }
+
+/* Feed */
+.feed{display:flex;flex-direction:column;gap:14px}
+.cards{display:flex;flex-direction:column;gap:16px}
+.card{display:flex;gap:16px;align-items:flex-start;padding:18px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 40px rgba(0,0,0,0.45)}
+.thumb{width:110px;height:84px;border-radius:12px;background:#040406;overflow:hidden;flex-shrink:0}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.info{flex:1;display:flex;flex-direction:column;gap:8px}
+.title-card{font-weight:900;font-size:16px;line-height:1.05}
+.desc{color:var(--muted);font-size:14px}
+.meta{color:var(--muted);font-size:13px;margin-top:auto}
+.chev{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,0.02);display:grid;place-items:center;color:var(--muted);flex-shrink:0}
+
+/* Sidebar */
+.sidebar{position:fixed;left:calc(-1 * var(--sidebar-w));top:0;height:100%;width:var(--sidebar-w);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-right:1px solid rgba(255,255,255,0.03);padding:18px;transition:left .28s cubic-bezier(.2,.9,.2,1);z-index:200;backdrop-filter: blur(6px);box-shadow: 8px 0 40px rgba(0,0,0,0.6);}
+.sidebar.open{left:0}
+.sb-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.sb-title{font-weight:900}
+.sb-sub{color:var(--muted);font-size:13px}
+.search-block{background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.008));padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.search-block input{width:100%;padding:10px;border-radius:10px;border:0;background:transparent;color:var(--text);outline:0}
+.social-grid{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.social-btn{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;color:#fff;font-weight:800;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 10px 30px rgba(124,58,237,0.12)}
+.social-btn.wh{background:#25D366;box-shadow:0 10px 30px rgba(37,211,102,0.12)}
+.social-btn.yt{background:linear-gradient(90deg,#FF4A4A,#FF8A00);box-shadow:0 10px 30px rgba(255,100,50,0.12)}
+.div{height:1px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));margin:12px 0;border-radius:2px}
+.share-site{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:10px;border-radius:12px;width:100%;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:800;border:0;height:var(--btn-h);}
+
+/* Detail page (full screen) */
+.detail-page{position:fixed;inset:0;background:linear-gradient(180deg, rgba(3,2,6,0.96), rgba(8,6,12,0.98));z-index:250;display:none;overflow:auto;padding:16px}
+.detail-inner{max-width:980px;margin:8px auto;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03)}
+.detail-hero{height:300px;border-radius:10px;overflow:hidden;background:#040406}
+.detail-hero img{width:100%;height:100%;object-fit:cover}
+.detail-title{font-weight:900;font-size:20px;margin-top:12px}
+.detail-body{color:var(--muted);margin-top:8px;line-height:1.6}
+.screens{display:flex;gap:8px;overflow:auto;margin-top:12px}
+.screens img{width:220px;height:120px;object-fit:cover;border-radius:8px}
+
+/* GAMES PAGE (same theme) */
+.games-root{display:none;padding:12px}
+.games-wrap{max-width:520px;margin:0 auto}
+.tabs{display:flex;gap:8px;margin:12px 0;overflow:auto;padding-bottom:6px}
+.tab{padding:8px 12px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);font-weight:700;cursor:pointer;white-space:nowrap;font-size:14px}
+.tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 8px 28px rgba(124,58,237,0.12)}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+.game-area{width:100%;min-height:320px;display:grid;place-items:center;padding:6px;margin-top:6px}
+.canvas, .board{width:100%;max-width:460px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.12));overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn-small{flex:1;min-width:120px;padding:10px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:800;cursor:pointer;height:var(--btn-h)}
+.btn-small.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+/* tic-tac-toe */
+#t3-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px}
+#t3-board button{aspect-ratio:1/1;border-radius:10px;border:0;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));font-size:34px;font-weight:900;color:#fff;cursor:pointer}
+#t3-board button.win{background:linear-gradient(90deg,#19d3ff,#7c3aed);color:#041226}
+/* snake */
+.dpad{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.dpad button{width:62px;height:62px;border-radius:12px;border:0;background:rgba(255,255,255,0.02);color:var(--text);font-weight:900}
+/* memory */
+.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px}
+.mem-card{aspect-ratio:1/1;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));display:grid;place-items:center;font-size:22px;font-weight:900;cursor:pointer;user-select:none}
+.mem-card.revealed{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
+/* puzzle */
+.puz-grid{display:grid;gap:6px;padding:10px}
+.puz-cell{display:grid;place-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:8px;font-weight:800;color:#fff;cursor:pointer;user-select:none}
+.puz-controls{display:flex;gap:8px;margin-top:10px;justify-content:center}
+
+/* small */
+.kv{color:var(--muted);font-size:13px}
+.footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
+button:focus,input:focus{outline:2px solid rgba(124,58,237,0.18);outline-offset:2px}
+@media(max-width:420px){ .sidebar{width:100%;left:-100%} .detail-hero{height:220px} .screens img{width:160px;height:100px} }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand">
+      <div class="logo"><img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="logo"></div>
+      <div>
+        <div class="title">GameHub Central</div>
+        <div class="subtitle">Mods, apps e utilitários • Mobile</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="openSidebar" class="btn ghost" aria-label="Abrir menu">Menu</button>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <main class="layout" id="mainLayout">
+
+    <!-- FEED / HOME -->
+    <section class="feed" id="homeView">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-weight:900">Bem-vindo</div>
+        <div class="kv">Toque num app para ver detalhes</div>
+      </div>
+
+      <div id="cards" class="cards"></div>
+    </section>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar" aria-hidden="true">
+      <div class="sb-head">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="logo"><img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="logo"></div>
+          <div>
+            <div class="sb-title">GameHub Central</div>
+            <div class="sb-sub">Links e pesquisa</div>
+          </div>
+        </div>
+        <button id="closeSidebar" class="btn ghost" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="search-block" role="search">
+        <label class="kv" style="margin-bottom:8px;display:block">Pesquisar</label>
+        <input id="sideSearch" placeholder="Pesquisar por nome, descrição ou tag">
+      </div>
+
+      <div class="div"></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:900">Redes sociais</div>
+        <div class="kv">Abrir</div>
+      </div>
+
+      <div class="social-grid" role="navigation">
+        <a class="social-btn" id="instaBtn" href="https://www.instagram.com/gabe.am29?igsh=bDc4dHl3ZGNhcm4y" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z" stroke="#fff" stroke-width="1.2"/></svg>
+          Instagram
+        </a>
+
+        <a class="social-btn wh" id="whatsBtn" href="https://chat.whatsapp.com/Kma7lW0piMU8njwKvqo5e1?mode=hqrc" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12.1a9 9 0 10-2.6 6.1L21 22l-2.1-6.9A8.9 8.9 0 0021 12.1z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Grupo WhatsApp
+        </a>
+
+        <a class="social-btn yt" id="ytBtn" href="https://www.youtube.com/@GabeAM29" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22.54 6.42a2.86 2.86 0 00-2.01-2.02C18.07 3.5 12 3.5 12 3.5s-6.07 0-8.53.9A2.86 2.86 0 001.46 6.42 29.84 29.84 0 001 12a29.84 29.84 0 00.46 5.58 2.86 2.86 0 002.01 2.02C5.93 20.5 12 20.5 12 20.5s6.07 0 8.53-.9a2.86 2.86 0 002.01-2.02A29.84 29.84 0 0023 12a29.84 29.84 0 00-.46-5.58z" stroke="#fff" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 15l5-3-5-3v6z" fill="#fff"/></svg>
+          YouTube
+        </a>
+      </div>
+
+      <div class="div" style="margin-top:14px"></div>
+
+      <button id="shareSite" class="share-site" aria-label="Compartilhar site">Compartilhar site</button>
+
+      <div style="position:absolute;bottom:18px;left:18px;right:18px;color:var(--muted);font-size:13px">GameHub Central • Mobile</div>
+    </aside>
+
+  </main>
+</div>
+
+<!-- Full-page detail -->
+<div id="detailPage" class="detail-page" aria-hidden="true">
+  <div class="detail-inner" id="detailInner"></div>
+</div>
+
+<!-- GAMES SUBPAGE (embedded) -->
+<div id="gamesPage" class="games-root" aria-hidden="true">
+  <div class="games-wrap">
+    <header style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <div class="logo" style="width:48px;height:48px"><img src="https://raw.githubusercontent.com/Gabe075/Imagem/refs/heads/main/IMG-20251116-WA0008.jpg" alt="logo"></div>
+      <div>
+        <div style="font-weight:900">GameHub Games</div>
+        <div class="kv">Jogos leves — integrado</div>
+      </div>
+    </header>
+
+    <nav class="tabs" id="gameTabs" style="margin-bottom:10px">
+      <button class="tab active" data-game="t3">Velha</button>
+      <button class="tab" data-game="snake">Cobrinha</button>
+      <button class="tab" data-game="flappy">Flappy</button>
+      <button class="tab" data-game="memory">Memória</button>
+      <button class="tab" data-game="puzzle">Quebra-cabeça</button>
+    </nav>
+
+    <section class="card">
+      <div id="gamesRootArea" class="game-area">
+        <!-- T3 -->
+        <div id="g-t3" class="g" style="display:block;width:100%">
+          <div style="padding:6px;width:100%">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800">Jogo da Velha</div>
+              <div id="t3-status" class="kv">Sua vez: X</div>
+            </div>
+            <div id="t3-board" class="board" style="margin-top:12px"></div>
+            <div class="controls" style="margin-top:12px">
+              <button id="t3-reset" class="btn-small btn-small ghost">Reiniciar</button>
+              <button id="t3-ai" class="btn-small">Jogar contra CPU</button>
+            </div>
+          </div>
+        </div>
+        <!-- Snake -->
+        <div id="g-snake" class="g" style="display:none;width:100%">
+          <div style="padding:6px;display:flex;flex-direction:column;gap:8px">
+            <canvas id="snake-canvas" class="canvas" width="440" height="360" style="max-width:100%"></canvas>
+            <div class="dpad" id="snake-controls">
+              <button data-dir="up">↑</button>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+              <button data-dir="left">←</button>
+              <button data-dir="right">→</button>
+            </div>
+            <div class="controls" style="margin-top:12px">
+              <button id="snake-start" class="btn-small">Iniciar</button>
+              <button id="snake-reset" class="btn-small ghost">Reiniciar</button>
+            </div>
+          </div>
+        </div>
+        <!-- Flappy -->
+        <div id="g-flappy" class="g" style="display:none;width:100%">
+          <div style="padding:6px;display:flex;flex-direction:column;gap:8px;align-items:center">
+            <canvas id="flappy-canvas" class="canvas" width="440" height="360" style="max-width:100%"></canvas>
+            <div class="controls" style="margin-top:12px">
+              <button id="flappy-start" class="btn-small">Iniciar</button>
+              <button id="flappy-reset" class="btn-small ghost">Reiniciar</button>
+            </div>
+          </div>
+        </div>
+        <!-- Memory -->
+        <div id="g-memory" class="g" style="display:none;width:100%">
+          <div style="padding:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800">Jogo da Memória</div>
+              <div id="mem-stats" class="kv">0 pares</div>
+            </div>
+            <div id="mem-grid" class="mem-grid board" style="margin-top:12px"></div>
+            <div class="controls" style="margin-top:12px"><button id="mem-reset" class="btn-small">Reiniciar</button></div>
+          </div>
+        </div>
+        <!-- Puzzle -->
+        <div id="g-puzzle" class="g" style="display:none;width:100%">
+          <div style="padding:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:800">Quebra-cabeça (4x4)</div>
+              <div id="puz-stats" class="kv">Embaralhado</div>
+            </div>
+            <div id="puz-board" class="puz-grid board" style="margin-top:12px"></div>
+            <div class="puz-controls" style="margin-top:12px">
+              <button id="puz-shuffle" class="btn-small">Embaralhar</button>
+              <button id="puz-reset" class="btn-small ghost">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px" class="kv">Toque em um tab para escolher o jogo • Toque no footer para voltar</div>
+    </section>
+    <div class="footer" style="margin-top:10px">Voltar</div>
+  </div>
+</div>
+
+<script>
+/* Single-file site loader + apps.js loader
+   - Router supports:
+     #/         => home
+     #/app/<slug> => app detail
+     #/games     => games main
+     #/games/<game> => open specific game tab
+*/
+
+/* --- Load apps.js without cache --- */
+(async function(){
+  try{
+    const res = await fetch('apps.js?t=' + Date.now(), { cache: 'no-store' });
+    if(!res.ok) throw new Error('apps.js não encontrado');
+    const js = await res.text();
+    const blob = new Blob([js], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const s = document.createElement('script'); s.src = url;
+    s.onload = ()=>{ URL.revokeObjectURL(url); boot(); };
+    document.body.appendChild(s);
+  }catch(e){
+    console.error('Erro ao carregar apps.js', e);
+    const s = document.createElement('script'); s.src='apps.js'; s.onload=boot; document.body.appendChild(s);
+  }
+})();
+
+/* --- Helpers --- */
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+function q(id){ return document.getElementById(id); }
+function $$(sel){ return Array.from(document.querySelectorAll(sel)); }
+function debounce(fn,t=160){ let to; return (...a)=>{ clearTimeout(to); to=setTimeout(()=>fn(...a),t); }; }
+
+/* --- Boot and render --- */
+function boot(){
+  if(!Array.isArray(window.APPS)) window.APPS = [];
+  renderList();
+  attachUI();
+  router(); // handle hash on load
+}
+
+/* Render app cards (no download buttons) */
+function getApps(){ return Array.isArray(window.APPS) ? window.APPS.slice().sort((a,b)=> (b.highlight?1:0)-(a.highlight?1:0) || (b.timestamp||0)-(a.timestamp||0)) : []; }
+
+function renderList(items){
+  const apps = Array.isArray(items) ? items : getApps();
+  const list = q('cards');
+  if(!apps.length){ list.innerHTML = '<div style="color:var(--muted)">Nenhum app.</div>'; return; }
+  list.innerHTML = apps.map(a=>`
+    <div class="card" data-slug="${esc(a.slug)}" role="button" tabindex="0" aria-label="Abrir ${esc(a.title)}">
+      <div class="thumb">${a.icon?'<img src="'+esc(a.icon)+'" alt="">':''}</div>
+      <div class="info">
+        <div class="title-card">${esc(a.title)}</div>
+        <div style="display:flex;gap:8px;margin-top:6px">${(a.badges||[]).map(b=>'<span style="padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:800;font-size:12px">'+esc(b)+'</span>').join('')}</div>
+        <div class="desc">${esc(a.desc||'')}</div>
+        <div class="meta">${esc(a.version||'')} · ${esc(a.size||'')}</div>
+      </div>
+      <div class="chev" aria-hidden="true">›</div>
+    </div>
+  `).join('');
+  // attach opens
+  q('cards').querySelectorAll('.card').forEach(el=>{
+    el.addEventListener('click', ()=> { openDetail(el.dataset.slug); });
+    el.addEventListener('keypress', (e)=> { if(e.key==='Enter' || e.key === ' ') openDetail(el.dataset.slug); });
+  });
+}
+
+/* --- Detail page --- */
+function openDetail(slug){
+  const app = getApps().find(a=>a.slug===slug);
+  if(!app) return;
+  const dp = q('detailPage'), inner = q('detailInner');
+  const screens = (app.screenshots||[]).map(s=>`<img src="${esc(s)}">`).join('');
+  inner.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button id="backBtn" class="btn ghost">← Voltar</button>
+      <div style="display:flex;gap:8px">
+        <a id="downloadBtn" class="btn" href="${esc(app.download||('files/'+app.slug+'.apk'))}" target="_blank" rel="noopener">Baixar</a>
+        <button id="copyLinkBtn" class="btn ghost">Copiar link</button>
+      </div>
+    </div>
+    <div class="detail-hero" style="margin-top:12px">${app.screenshots && app.screenshots[0] ? '<img src="'+esc(app.screenshots[0])+'">' : (app.icon?'<img src="'+esc(app.icon)+'" alt="icon">':'')}</div>
+    <div class="detail-title">${esc(app.title)}</div>
+    <div class="kv">${esc(app.version||'')} · ${esc(app.size||'')}</div>
+    <div class="detail-body">${esc(app.fullDesc || app.desc || '')}</div>
+    <div style="margin-top:12px"><strong>Screenshots</strong><div class="screens" style="margin-top:8px">${screens}</div></div>
+  `;
+  dp.style.display = 'block'; dp.setAttribute('aria-hidden','false');
+  q('backBtn').addEventListener('click', ()=> { dp.style.display='none'; dp.setAttribute('aria-hidden','true'); history.pushState({},'', location.pathname); });
+  q('copyLinkBtn').addEventListener('click', async ()=> {
+    const url = location.origin + location.pathname + '#/app/' + encodeURIComponent(app.slug);
+    try{ await navigator.clipboard.writeText(url); q('copyLinkBtn').textContent='✓ Copiado'; setTimeout(()=> q('copyLinkBtn').textContent='Copiar link',1400); }catch(e){ alert('Não foi possível copiar o link.'); }
+  });
+  history.pushState({slug}, '', '#/app/' + encodeURIComponent(app.slug));
+}
+
+/* --- Sidebar & UI binding --- */
+function attachUI(){
+  q('openSidebar').addEventListener('click', ()=> { q('sidebar').classList.add('open'); q('sidebar').setAttribute('aria-hidden','false'); q('sideSearch').focus(); });
+  q('closeSidebar').addEventListener('click', ()=> { q('sidebar').classList.remove('open'); q('sidebar').setAttribute('aria-hidden','true'); });
+  q('sideSearch').addEventListener('input', debounce(()=> { const v = q('sideSearch').value; searchAndRender(v); }, 160));
+  q('shareSite').addEventListener('click', async ()=> {
+    const url = location.href;
+    if(navigator.share){ try{ await navigator.share({ title: document.title, url }); return; }catch(e){ } }
+    try{ await navigator.clipboard.writeText(url); q('shareSite').textContent='✓ Copiado'; setTimeout(()=> q('shareSite').textContent='Compartilhar site',1400); }catch(e){ alert('Não foi possível copiar o link.'); }
+  });
+  // add link to games in sidebar
+  const gamesBtn = document.createElement('a'); gamesBtn.href = '#/games'; gamesBtn.className='btn ghost'; gamesBtn.textContent='GameHub Games'; gamesBtn.style.marginTop='10px'; gamesBtn.style.display='block';
+  q('sidebar').insertBefore(gamesBtn, q('sidebar').querySelector('.div'));
+}
+
+/* --- Search filter (used by sidebar) --- */
+function searchAndRender(qv){
+  qv = String(qv||'').trim().toLowerCase();
+  const apps = getApps();
+  const filtered = apps.filter(a=> {
+    if(!qv) return true;
+    return (a.title+' '+(a.desc||'')+' '+(a.fullDesc||'')+' '+(a.tag||'')).toLowerCase().includes(qv);
+  });
+  renderList(filtered);
+}
+
+/* --- Router --- */
+function router(){
+  const h = location.hash || '#/';
+  if(h.startsWith('#/app/')){
+    // open detail
+    const slug = decodeURIComponent(h.replace('#/app/',''));
+    openDetail(slug);
+    // show home layout hidden (ensure)
+    q('homeView').style.display='block';
+    q('gamesPage').style.display='none';
+    return;
+  }
+  if(h === '#/games' || h.startsWith('#/games/')){
+    // show games page
+    q('homeView').style.display='none';
+    q('gamesPage').style.display='block';
+    // if specific game, open tab
+    const parts = h.split('/');
+    if(parts[2]){
+      openGameTab(parts[2]);
+    } else {
+      openGameTab('t3');
+    }
+    return;
+  }
+  // default home
+  q('homeView').style.display='block';
+  q('gamesPage').style.display='none';
+}
+window.addEventListener('hashchange', router);
+
+/* --- Open game tab in embedded games page --- */
+function openGameTab(slug){
+  // map slug normalization
+  const map = { 'velha':'t3','t3':'t3','snake':'snake','flappy':'flappy','memory':'memory','puzzle':'puzzle' };
+  const key = map[slug] || slug || 't3';
+  // visually toggle tabs
+  q('#gameTabs').querySelectorAll('.tab').forEach(t=> t.classList.toggle('active', t.dataset.game===key));
+  // show game container
+  qAll('.g').forEach(el => el.style.display = el.id === 'g-'+key ? 'block' : 'none');
+  // stop everything then start chosen
+  stopAllGames();
+  if(key === 't3') startT3();
+  if(key === 'snake') startSnake();
+  if(key === 'flappy') startFlappy();
+  if(key === 'memory') startMemory();
+  if(key === 'puzzle') startPuzzle();
+  history.replaceState({},'', '#/games/'+key);
+}
+
+/* helper to select all with fallback */
+function qAll(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+/* --- Games: modular implementations (start/stop) --- */
+
+/* TIC-TAC-TOE (remodelado) */
+(function(){
+  const boardEl = q('t3-board');
+  const status = q('t3-status');
+  let board, turn, running, vsAI;
+
+  function render(){
+    boardEl.innerHTML = '';
+    for(let i=0;i<9;i++){
+      const b = document.createElement('button');
+      b.dataset.idx = i;
+      b.innerHTML = board[i] || '';
+      if(running && !board[i]) b.addEventListener('click', onClick);
+      b.className = '';
+      boardEl.appendChild(b);
+    }
+  }
+
+  function checkWin(bd){
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for(const w of wins){
+      const [a,c,d] = w;
+      if(bd[a] && bd[a] === bd[c] && bd[a] === bd[d]) return {win:true, who:bd[a], combo:w};
+    }
+    if(bd.every(x=>x)) return {draw:true};
+    return {win:false};
+  }
+
+  function highlight(combo){
+    boardEl.querySelectorAll('button').forEach((btn,i)=> {
+      if(combo.includes(i)) btn.classList.add('win');
+    });
+  }
+
+  function onClick(e){
+    const idx = +e.currentTarget.dataset.idx;
+    if(!running || board[idx]) return;
+    board[idx] = turn;
+    updateAfterMove();
+  }
+
+  function updateAfterMove(){
+    const st = checkWin(board);
+    if(st.win){ running=false; status.textContent = `Venceu: ${st.who}`; highlight(st.combo); }
+    else if(st.draw){ running=false; status.textContent = 'Empate'; }
+    else {
+      turn = (turn === 'X') ? 'O' : 'X';
+      status.textContent = `Sua vez: ${turn}`;
+      if(vsAI && turn === 'O') setTimeout(aiMove, 260);
+    }
+    render();
+  }
+
+  function aiMove(){
+    const best = findBestMove(board, 'O');
+    if(best !== null) board[best] = 'O';
+    else {
+      const empties = board.map((v,i)=> v?null:i).filter(x=> x!==null);
+      const r = empties[Math.floor(Math.random()*empties.length)];
+      if(r!==undefined) board[r]= 'O';
+    }
+    updateAfterMove();
+  }
+
+  function findBestMove(bd, player){
+    for(let i=0;i<9;i++){
+      if(!bd[i]){
+        const tmp = bd.slice(); tmp[i]=player;
+        const res = checkWin(tmp);
+        if(res.win && res.who === player) return i;
+      }
+    }
+    const opp = player==='O'?'X':'O';
+    for(let i=0;i<9;i++){
+      if(!bd[i]){
+        const tmp = bd.slice(); tmp[i]=opp;
+        const res = checkWin(tmp);
+        if(res.win && res.who === opp) return i;
+      }
+    }
+    return null;
+  }
+
+  function start(){
+    board = Array(9).fill('');
+    turn = 'X';
+    running = true;
+    vsAI = false;
+    status.textContent = `Sua vez: ${turn}`;
+    render();
+  }
+
+  q('t3-reset').addEventListener('click', ()=> { start(); });
+  q('t3-ai').addEventListener('click', ()=> { vsAI = !vsAI; q('t3-ai').textContent = vsAI ? 'CPU: ON' : 'Jogar contra CPU'; if(vsAI && turn==='O') aiMove(); });
+
+  window.startT3 = start;
+  window.stopT3 = ()=> { /* nothing to stop */ };
+})();
+
+/* SNAKE (canvas) */
+(function(){
+  const canvas = q('snake-canvas');
+  const ctx = canvas.getContext('2d');
+  let w,h, tile, snake, dir, food, loopId, running = false, speed=110;
+
+  function resize(){
+    const ratio = Math.min(460, window.innerWidth-40);
+    canvas.width = ratio; canvas.height = Math.round(ratio * 0.8);
+    w = Math.floor(canvas.width / 16); h = Math.floor(canvas.height / 16); tile = Math.floor(canvas.width / (w));
+  }
+
+  function draw(){
+    ctx.fillStyle = '#06060a'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#ffcc00'; ctx.fillRect(food.x*tile+2, food.y*tile+2, tile-4, tile-4);
+    ctx.fillStyle = 'rgba(124,58,237,0.95)';
+    snake.forEach((s,i)=> ctx.fillRect(s.x*tile+1, s.y*tile+1, tile-2, tile-2));
+  }
+
+  function placeFood(){
+    let ok=false, x, y;
+    while(!ok){
+      x = Math.floor(Math.random()*w); y = Math.floor(Math.random()*h);
+      ok = !snake.some(s=>s.x===x && s.y===y);
+    }
+    food = {x,y};
+  }
+
+  function step(){
+    const head = {x:snake[0].x + dir.x, y:snake[0].y + dir.y};
+    if(head.x<0||head.x>=w||head.y<0||head.y>=h) return gameOver();
+    if(snake.some(s=>s.x===head.x && s.y===head.y)) return gameOver();
+    snake.unshift(head);
+    if(head.x===food.x && head.y===food.y){ placeFood(); }
+    else snake.pop();
+    draw();
+  }
+
+  function gameOver(){
+    stop();
+    alert('Game Over — Toque Iniciar para tentar de novo');
+  }
+
+  function start(){
+    stop();
+    resize();
+    snake = [{x:Math.floor(w/2),y:Math.floor(h/2)}];
+    dir = {x:1,y:0};
+    for(let i=1;i<4;i++) snake.push({x:snake[0].x-i,y:snake[0].y});
+    placeFood();
+    running = true;
+    loopId = setInterval(step, speed);
+  }
+
+  function stop(){
+    running = false;
+    if(loopId) { clearInterval(loopId); loopId=null; }
+  }
+
+  // controls
+  (function bindControls(){
+    qAll('#snake-controls button, #snake-controls div button').forEach(b=> b.addEventListener('click', ()=> {
+      const d = b.dataset.dir;
+      if(!d) return;
+      if(d==='up' && dir.y===0) dir={x:0,y:-1};
+      if(d==='down' && dir.y===0) dir={x:0,y:1};
+      if(d==='left' && dir.x===0) dir={x:-1,y:0};
+      if(d==='right' && dir.x===0) dir={x:1,y:0};
+    }));
+  })();
+  q('snake-start').addEventListener('click', ()=> { start(); });
+  q('snake-reset').addEventListener('click', ()=> { start(); });
+
+  window.startSnake = start;
+  window.stopSnake = stop;
+})();
+
+/* FLAPPY */
+(function(){
+  const c = q('flappy-canvas'), ctx = c.getContext('2d');
+  let w,h, bird, pipes, gravity=0.5, loop, running=false, frame=0, gap=100;
+
+  function resize(){ const ratio = Math.min(460, window.innerWidth-40); c.width = ratio; c.height = Math.round(ratio * 0.78); w=c.width; h=c.height; }
+
+  function reset(){ bird = {x:60,y:h/2,vy:0,r:12}; pipes = []; frame=0; running=false; }
+
+  function spawnPipe(){ const top = 40 + Math.random()*(h-220); pipes.push({x:w,top,passed:false}); }
+
+  function draw(){
+    ctx.fillStyle = '#06060a'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle = '#ffdd57'; ctx.beginPath(); ctx.arc(bird.x,bird.y,bird.r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(124,58,237,0.95)';
+    pipes.forEach(p=> { ctx.fillRect(p.x,0,48,p.top); ctx.fillRect(p.x,p.top+gap,48,h-(p.top+gap)); });
+  }
+
+  function step(){
+    frame++;
+    bird.vy += gravity; bird.y += bird.vy;
+    if(frame%90===0) spawnPipe();
+    pipes.forEach(p=> p.x -= 2.6);
+    if(bird.y+bird.r>h || bird.y-bird.r<0) return gameOver();
+    for(const p of pipes){
+      if(bird.x+bird.r > p.x && bird.x-bird.r < p.x+48){
+        if(bird.y - bird.r < p.top || bird.y + bird.r > p.top+gap) return gameOver();
+      }
+      if(!p.passed && p.x+48 < bird.x){ p.passed=true; }
+    }
+    pipes = pipes.filter(p=> p.x > -60).slice(-5);
+    draw();
+  }
+
+  function gameOver(){ stop(); alert('Game Over — Toque Iniciar para tentar de novo'); }
+  function start(){ stop(); resize(); reset(); running=true; loop = setInterval(step, 20); }
+  function stop(){ running=false; if(loop){ clearInterval(loop); loop=null; } }
+  c.addEventListener('click', ()=> { if(bird) bird.vy = -8; });
+  q('flappy-start').addEventListener('click', ()=> start());
+  q('flappy-reset').addEventListener('click', ()=> start());
+  window.startFlappy = start;
+  window.stopFlappy = stop;
+})();
+
+/* MEMORY (4x4) */
+(function(){
+  const grid = q('mem-grid');
+  const stats = q('mem-stats');
+  let cards=[], first=null, second=null, matches=0, lock=false;
+  function icons(){ return ['🍎','🚀','🎮','⚡','🧩','🎵','🔥','💎']; }
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+  function start(){
+    cards = shuffle([...icons(),...icons()]);
+    grid.innerHTML = cards.map((c,i)=> `<div class="mem-card" data-i="${i}"></div>`).join('');
+    first = second = null; matches=0; lock=false; stats.textContent = `${matches} pares`; bind();
+  }
+  function bind(){ grid.querySelectorAll('.mem-card').forEach(el=> el.addEventListener('click', onClick)); }
+  function onClick(e){
+    if(lock) return;
+    const el = e.currentTarget; const idx = +el.dataset.i;
+    if(el.classList.contains('revealed')) return;
+    reveal(el, cards[idx]);
+    if(!first) first = {el,idx}; else { second={el,idx}; lock=true; setTimeout(checkPair, 600); }
+  }
+  function reveal(el, ch){ el.classList.add('revealed'); el.innerHTML = ch; }
+  function hide(el){ el.classList.remove('revealed'); el.innerHTML = ''; }
+  function checkPair(){
+    if(cards[first.idx] === cards[second.idx]){ matches++; stats.textContent = `${matches} pares`; first=null; second=null; lock=false; if(matches === cards.length/2) setTimeout(()=> alert('Você venceu!'),200);
+    } else { hide(first.el); hide(second.el); first=null; second=null; lock=false; }
+  }
+  q('mem-reset').addEventListener('click', ()=> start());
+  window.startMemory = start;
+  window.stopMemory = ()=> {};
+  start();
+})();
+
+/* SLIDING PUZZLE (4x4) */
+(function(){
+  const board = q('puz-board');
+  const stats = q('puz-stats');
+  let size=4, cells=[], emptyIdx;
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+  function isSolvable(arr){
+    const inv = arr.reduce((acc, v, i) => acc + (v ? arr.slice(i+1).filter(x=>x && x < v).length : 0), 0);
+    if(size%2===1) return inv%2===0;
+    const row = Math.floor(arr.indexOf(0) / size) + 1;
+    return (inv + row) % 2 === 1;
+  }
+  function start(){
+    board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    let arr;
+    do { arr = shuffle([...Array(size*size).keys()]); } while(!isSolvable(arr));
+    cells = arr; emptyIdx = cells.indexOf(0);
+    render(); stats.textContent = 'Embaralhado';
+  }
+  function render(){
+    board.innerHTML = cells.map((v, i)=> {
+      if(v===0) return `<div class="puz-cell" data-i="${i}" style="height:calc((100vw - 80px)/${size});background:transparent"></div>`;
+      return `<div class="puz-cell" data-i="${i}" style="height:calc((100vw - 80px)/${size});">${v}</div>`;
+    }).join('');
+    board.querySelectorAll('.puz-cell').forEach(el=> el.addEventListener('click', onClick));
+  }
+  function onClick(e){
+    const idx = +e.currentTarget.dataset.i;
+    const neighbors = adjacentIndices(idx);
+    if(neighbors.includes(emptyIdx)){
+      [cells[idx], cells[emptyIdx]] = [cells[emptyIdx], cells[idx]];
+      emptyIdx = idx; render(); if(cells.slice(0,-1).every((v,i)=> v===i+1)) setTimeout(()=> alert('Parabéns! Puzzle resolvido.'),120);
+    }
+  }
+  function adjacentIndices(i){
+    const row = Math.floor(i/size), col = i%size;
+    const res = [];
+    if(row>0) res.push((row-1)*size + col);
+    if(row<size-1) res.push((row+1)*size + col);
+    if(col>0) res.push(row*size + col-1);
+    if(col<size-1) res.push(row*size + col+1);
+    return res;
+  }
+  q('puz-shuffle').addEventListener('click', start);
+  q('puz-reset').addEventListener('click', start);
+  window.startPuzzle = start;
+  window.stopPuzzle = ()=> {};
+  start();
+})();
+
+/* stop all games safety */
+function stopAllGames(){
+  if(window.stopT3) window.stopT3();
+  if(window.stopSnake) window.stopSnake();
+  if(window.stopFlappy) window.stopFlappy();
+  if(window.stopMemory) window.stopMemory();
+  if(window.stopPuzzle) window.stopPuzzle();
+}
+
+/* --- Small UI actions --- */
+qAll('.footer').forEach(el => el.addEventListener('click', ()=> { history.back(); }));
+// open games tabs
+qAll('#gameTabs .tab').forEach(t => t.addEventListener('click', ()=> {
+  qAll('#gameTabs .tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  const game = t.dataset.game;
+  qAll('.g').forEach(g=> g.style.display = g.id === 'g-'+game ? 'block' : 'none');
+  stopAllGames();
+  if(game === 't3') startT3();
+  if(game === 'snake') startSnake();
+  if(game === 'flappy') startFlappy();
+  if(game === 'memory') startMemory();
+  if(game === 'puzzle') startPuzzle();
+  history.replaceState({},'', '#/games/'+game);
+}));
+
+/* --- Router init on load --- */
+window.addEventListener('load', ()=> { router(); });
+window.addEventListener('hashchange', ()=> { router(); });
+
+/* --- Hide games or show home when user navigates back --- */
+window.addEventListener('popstate', ()=> { router(); });
+
+/* --- Misc helpers for initial UI --- */
+function initUIafterLoad(){
+  // nothing else needed
+}
+</script>
+</body>
+  </html>
